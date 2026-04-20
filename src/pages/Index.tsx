@@ -153,11 +153,16 @@ export default function Index() {
   const [intro, setIntro] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [isNight, setIsNight] = useState(false);
-  const [concept, setConcept] = useState<Concept>("gatgil");
+  const [concept, setConcept] = useState<Concept>("track");
+  const [trackPick, setTrackPick] = useState<PickConcept>(() => {
+    const arr: PickConcept[] = ["gatgil", "saetgil", "jireum"];
+    return arr[Math.floor(Math.random() * arr.length)];
+  });
   const [filter, setFilter] = useState<"all" | "namgu" | "junggu">("all");
   const [moreNamgu, setMoreNamgu] = useState(false);
   const [moreJunggu, setMoreJunggu] = useState(false);
   const [guidePage, setGuidePage] = useState(0); // 0 = intro, 1..4 = chapters
+  const [guideTick, setGuideTick] = useState(0); // 진행바 리셋용 키
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
