@@ -28,7 +28,7 @@ const cycleAround = (c: Concept) => {
   };
 };
 
-const PICKS: Record<Concept, {
+const PICKS: Record<PickConcept, {
   img: string; type: string; title: string[]; loc: string; essay: string[]; badges: string[];
 }> = {
   gatgil: {
