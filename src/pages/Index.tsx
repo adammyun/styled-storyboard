@@ -454,8 +454,8 @@ export default function Index() {
       </section>
 
       {/* Guide — 페이지 넘김 */}
-      <section id="guide" className="px-6 md:px-14 py-24 bg-guide transition-colors duration-700">
-        <div className="flex items-center justify-between mb-8">
+      <section id="guide" className="px-6 md:px-14 py-20 bg-guide transition-colors duration-700">
+        <div className="flex items-center justify-between mb-6">
           <p className="reveal text-[9px] tracking-[0.3em] text-white/30 flex items-center gap-3.5">
             WALKING GUIDE<span className="block w-7 h-px bg-accent-c" />
           </p>
@@ -464,43 +464,42 @@ export default function Index() {
           </span>
         </div>
 
-        <div className="relative min-h-[420px]">
-          {/* 페이지 0 — 인트로 */}
+        <div className="relative">
           <article key={`g-${guidePage}`} className="animate-fade-up">
             {guidePage === 0 ? (
-              <div className="grid md:grid-cols-[1fr_1fr] gap-10 md:gap-16 items-start">
+              <div className="grid md:grid-cols-[1fr_1.1fr] gap-8 md:gap-14 items-center">
                 <div>
-                  <p className="font-display italic text-accent-c text-2xl md:text-3xl mb-6 opacity-80">— Prologue</p>
-                  <h2 className="font-serif-kr text-3xl md:text-[42px] leading-[1.35] text-white/85 mb-4">
+                  <p className="font-display italic text-accent-c text-2xl md:text-4xl mb-5 opacity-80">— Prologue</p>
+                  <h2 className="font-serif-kr text-3xl md:text-5xl lg:text-[54px] leading-[1.3] text-white/90 mb-2">
                     {GUIDE_INTRO.title}<br/>
                     <span className="text-accent-c">{GUIDE_INTRO.subtitle}</span>
                   </h2>
                 </div>
-                <div className="md:pt-16">
-                  <p className="font-serif-kr italic text-[15px] leading-[2.1] text-white/55">
+                <div>
+                  <p className="font-serif-kr italic text-lg md:text-xl leading-[1.95] text-white/65">
                     {GUIDE_INTRO.body}
                   </p>
-                  <div className="mt-8 flex items-center gap-3 text-[10px] tracking-[0.2em] text-white/35">
+                  <div className="mt-6 flex items-center gap-3 text-[10px] tracking-[0.2em] text-white/35">
                     <span className="block w-7 h-px bg-accent-c" />
                     TRACK : 052 · ULSAN
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="grid md:grid-cols-[1fr_1.4fr] gap-10 md:gap-16 items-start">
+              <div className="grid md:grid-cols-[0.85fr_1.6fr] gap-8 md:gap-14 items-center">
                 <div>
-                  <div className="font-display text-7xl md:text-[110px] text-accent-c opacity-30 leading-none mb-5">
+                  <div className="font-display text-7xl md:text-[140px] text-accent-c opacity-30 leading-none mb-4">
                     {GUIDE[guidePage - 1].n}
                   </div>
-                  <h3 className="font-serif-kr text-2xl md:text-3xl text-white/85">
+                  <h3 className="font-serif-kr text-3xl md:text-[40px] leading-[1.3] text-white/90">
                     {GUIDE[guidePage - 1].t}
                   </h3>
                 </div>
-                <div className="md:pt-12 space-y-6">
-                  <p className="font-serif-kr text-base md:text-lg leading-[2] text-white/70">
+                <div className="space-y-5">
+                  <p className="font-serif-kr text-lg md:text-2xl leading-[1.85] text-white/75">
                     {GUIDE[guidePage - 1].d}
                   </p>
-                  <p className="text-[12px] leading-[2] text-white/40 border-l border-white/15 pl-5">
+                  <p className="text-sm md:text-[15px] leading-[1.95] text-white/45 border-l border-white/15 pl-5">
                     {GUIDE[guidePage - 1].extra}
                   </p>
                 </div>
@@ -509,12 +508,20 @@ export default function Index() {
           </article>
         </div>
 
+        {/* 자동 전환 타이머 바 */}
+        <div className="mt-10 h-px bg-white/[0.07] overflow-hidden">
+          <div
+            key={guideTick}
+            className="h-full bg-accent-c"
+            style={{ animation: "loadbar 8s linear forwards" }}
+          />
+        </div>
+
         {/* 페이지 컨트롤 */}
-        <div className="mt-12 flex items-center justify-between border-t border-white/[0.07] pt-6">
+        <div className="mt-5 flex items-center justify-between border-t border-white/[0.07] pt-5">
           <button
-            onClick={() => setGuidePage((p) => Math.max(0, p - 1))}
-            disabled={guidePage === 0}
-            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+            onClick={() => setGuidePage((p) => (p === 0 ? 4 : p - 1))}
+            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors"
           >
             ← 이전 장
           </button>
@@ -529,9 +536,8 @@ export default function Index() {
             ))}
           </div>
           <button
-            onClick={() => setGuidePage((p) => Math.min(4, p + 1))}
-            disabled={guidePage === 4}
-            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+            onClick={() => setGuidePage((p) => (p + 1) % 5)}
+            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors"
           >
             다음 장 →
           </button>
