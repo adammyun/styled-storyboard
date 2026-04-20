@@ -1,30 +1,34 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-type Concept = "gatgil" | "saetgil" | "jireum";
+type Concept = "track" | "gatgil" | "saetgil" | "jireum";
+type PickConcept = Exclude<Concept, "track">;
 
 const CONCEPT_LABEL: Record<Concept, string> = {
+  track: "Track : 052",
   gatgil: "갓길",
   saetgil: "샛길",
   jireum: "지름길",
 };
 const CONCEPT_DESC: Record<Concept, string> = {
+  track: "ULSAN HIDDEN TRACK — 오늘의 길을 골라보세요",
   gatgil: "GATGIL — 잠시 쉬어가는 길",
   saetgil: "SAETGIL — 아무도 모르는 예쁜 길",
   jireum: "JIREUM — 현지인만 아는 빠른 길",
 };
 
 // 순환 순서: 선택한 요소 기준으로 [left, center(selected), right]
-const CYCLE: Concept[] = ["gatgil", "saetgil", "jireum"];
+const CYCLE: Concept[] = ["track", "gatgil", "saetgil", "jireum"];
 const cycleAround = (c: Concept) => {
   const i = CYCLE.indexOf(c);
+  const n = CYCLE.length;
   return {
-    left: CYCLE[(i + 2) % 3],
+    left: CYCLE[(i + n - 1) % n],
     center: c,
-    right: CYCLE[(i + 1) % 3],
+    right: CYCLE[(i + 1) % n],
   };
 };
 
-const PICKS: Record<Concept, {
+const PICKS: Record<PickConcept, {
   img: string; type: string; title: string[]; loc: string; essay: string[]; badges: string[];
 }> = {
   gatgil: {
@@ -149,11 +153,16 @@ export default function Index() {
   const [intro, setIntro] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [isNight, setIsNight] = useState(false);
-  const [concept, setConcept] = useState<Concept>("gatgil");
+  const [concept, setConcept] = useState<Concept>("track");
+  const [trackPick, setTrackPick] = useState<PickConcept>(() => {
+    const arr: PickConcept[] = ["gatgil", "saetgil", "jireum"];
+    return arr[Math.floor(Math.random() * arr.length)];
+  });
   const [filter, setFilter] = useState<"all" | "namgu" | "junggu">("all");
   const [moreNamgu, setMoreNamgu] = useState(false);
   const [moreJunggu, setMoreJunggu] = useState(false);
   const [guidePage, setGuidePage] = useState(0); // 0 = intro, 1..4 = chapters
+  const [guideTick, setGuideTick] = useState(0); // 진행바 리셋용 키
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
@@ -174,6 +183,9 @@ export default function Index() {
     return () => clearInterval(t);
   }, []);
 
+  // 진행바 리셋 — 페이지가 바뀔 때마다 애니메이션 키 갱신
+  useEffect(() => { setGuideTick((k) => k + 1); }, [guidePage]);
+
   useEffect(() => {
     observerRef.current?.disconnect();
     const io = new IntersectionObserver((entries) => {
@@ -184,7 +196,9 @@ export default function Index() {
     return () => io.disconnect();
   }, [concept, filter, moreNamgu, moreJunggu, guidePage, intro]);
 
-  const pick = PICKS[concept];
+  // Track 선택 시엔 랜덤 픽, 그 외엔 해당 컨셉
+  const pickConcept: PickConcept = concept === "track" ? trackPick : concept;
+  const pick = PICKS[pickConcept];
   const namguList = moreNamgu ? NAMGU : NAMGU.filter((i) => !i.extra);
   const jungguList = moreJunggu ? JUNGGU : JUNGGU.filter((i) => !i.extra);
   const showNamgu = filter !== "junggu";
@@ -260,13 +274,26 @@ export default function Index() {
           {/* 중앙 — 선택된 개념이 Track:052 자리를 완전히 대체 */}
           <div className="flex items-baseline flex-shrink-0">
             <span className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none -tracking-[0.02em]">[</span>
-            <span
-              key={concept}
-              className="font-serif-kr text-4xl md:text-6xl lg:text-7xl text-accent-c leading-none -tracking-[0.02em] px-3 md:px-5 inline-block"
+            <button
+              key={concept === "track" ? `track-${trackPick}` : concept}
+              onClick={() => {
+                if (concept === "track") {
+                  // 다른 픽으로 변경
+                  const arr: PickConcept[] = ["gatgil", "saetgil", "jireum"];
+                  const next = arr.filter((p) => p !== trackPick);
+                  setTrackPick(next[Math.floor(Math.random() * next.length)]);
+                }
+              }}
+              className={`font-serif-kr text-accent-c leading-none -tracking-[0.02em] px-3 md:px-5 inline-block transition-all ${
+                concept === "track"
+                  ? "text-3xl md:text-5xl lg:text-6xl"
+                  : "text-4xl md:text-6xl lg:text-7xl"
+              }`}
               style={{ animation: "fade-up .55s ease forwards" }}
+              aria-label="Selected concept"
             >
               {CONCEPT_LABEL[cycle.center]}
-            </span>
+            </button>
             <span className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-none -tracking-[0.02em]">]</span>
           </div>
 
@@ -303,9 +330,11 @@ export default function Index() {
           <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5">
             EDITOR'S PICK<span className="block w-7 h-px bg-accent-c" />
           </p>
-          <span className="text-[9px] tracking-[0.18em] text-accent-c bg-accent-soft px-3 py-1 rounded-full transition-all">{CONCEPT_LABEL[concept]}</span>
+          <span className="text-[9px] tracking-[0.18em] text-accent-c bg-accent-soft px-3 py-1 rounded-full transition-all">
+            {concept === "track" ? `Track : 052 · ${CONCEPT_LABEL[pickConcept]}` : CONCEPT_LABEL[concept]}
+          </span>
         </div>
-        <div key={concept} className="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-14 items-start animate-fade-up">
+        <div key={pickConcept} className="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-14 items-start animate-fade-up">
           <div className="reveal group relative aspect-[4/3] overflow-hidden rounded-sm bg-[hsl(var(--ink-faint))]">
             <DayNightImg base={pick.img} alt={pick.title.join(" ")} isNight={isNight} className="transition-transform duration-700 group-hover:scale-[1.04]" />
           </div>
@@ -425,8 +454,8 @@ export default function Index() {
       </section>
 
       {/* Guide — 페이지 넘김 */}
-      <section id="guide" className="px-6 md:px-14 py-24 bg-guide transition-colors duration-700">
-        <div className="flex items-center justify-between mb-8">
+      <section id="guide" className="px-6 md:px-14 py-20 bg-guide transition-colors duration-700">
+        <div className="flex items-center justify-between mb-6">
           <p className="reveal text-[9px] tracking-[0.3em] text-white/30 flex items-center gap-3.5">
             WALKING GUIDE<span className="block w-7 h-px bg-accent-c" />
           </p>
@@ -435,43 +464,42 @@ export default function Index() {
           </span>
         </div>
 
-        <div className="relative min-h-[420px]">
-          {/* 페이지 0 — 인트로 */}
+        <div className="relative">
           <article key={`g-${guidePage}`} className="animate-fade-up">
             {guidePage === 0 ? (
-              <div className="grid md:grid-cols-[1fr_1fr] gap-10 md:gap-16 items-start">
+              <div className="grid md:grid-cols-[1fr_1.1fr] gap-8 md:gap-14 items-center">
                 <div>
-                  <p className="font-display italic text-accent-c text-2xl md:text-3xl mb-6 opacity-80">— Prologue</p>
-                  <h2 className="font-serif-kr text-3xl md:text-[42px] leading-[1.35] text-white/85 mb-4">
+                  <p className="font-display italic text-accent-c text-2xl md:text-4xl mb-5 opacity-80">— Prologue</p>
+                  <h2 className="font-serif-kr text-3xl md:text-5xl lg:text-[54px] leading-[1.3] text-white/90 mb-2">
                     {GUIDE_INTRO.title}<br/>
                     <span className="text-accent-c">{GUIDE_INTRO.subtitle}</span>
                   </h2>
                 </div>
-                <div className="md:pt-16">
-                  <p className="font-serif-kr italic text-[15px] leading-[2.1] text-white/55">
+                <div>
+                  <p className="font-serif-kr italic text-lg md:text-xl leading-[1.95] text-white/65">
                     {GUIDE_INTRO.body}
                   </p>
-                  <div className="mt-8 flex items-center gap-3 text-[10px] tracking-[0.2em] text-white/35">
+                  <div className="mt-6 flex items-center gap-3 text-[10px] tracking-[0.2em] text-white/35">
                     <span className="block w-7 h-px bg-accent-c" />
                     TRACK : 052 · ULSAN
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="grid md:grid-cols-[1fr_1.4fr] gap-10 md:gap-16 items-start">
+              <div className="grid md:grid-cols-[0.85fr_1.6fr] gap-8 md:gap-14 items-center">
                 <div>
-                  <div className="font-display text-7xl md:text-[110px] text-accent-c opacity-30 leading-none mb-5">
+                  <div className="font-display text-7xl md:text-[140px] text-accent-c opacity-30 leading-none mb-4">
                     {GUIDE[guidePage - 1].n}
                   </div>
-                  <h3 className="font-serif-kr text-2xl md:text-3xl text-white/85">
+                  <h3 className="font-serif-kr text-3xl md:text-[40px] leading-[1.3] text-white/90">
                     {GUIDE[guidePage - 1].t}
                   </h3>
                 </div>
-                <div className="md:pt-12 space-y-6">
-                  <p className="font-serif-kr text-base md:text-lg leading-[2] text-white/70">
+                <div className="space-y-5">
+                  <p className="font-serif-kr text-lg md:text-2xl leading-[1.85] text-white/75">
                     {GUIDE[guidePage - 1].d}
                   </p>
-                  <p className="text-[12px] leading-[2] text-white/40 border-l border-white/15 pl-5">
+                  <p className="text-sm md:text-[15px] leading-[1.95] text-white/45 border-l border-white/15 pl-5">
                     {GUIDE[guidePage - 1].extra}
                   </p>
                 </div>
@@ -480,12 +508,20 @@ export default function Index() {
           </article>
         </div>
 
+        {/* 자동 전환 타이머 바 */}
+        <div className="mt-10 h-px bg-white/[0.07] overflow-hidden">
+          <div
+            key={guideTick}
+            className="h-full bg-accent-c"
+            style={{ animation: "loadbar 8s linear forwards" }}
+          />
+        </div>
+
         {/* 페이지 컨트롤 */}
-        <div className="mt-12 flex items-center justify-between border-t border-white/[0.07] pt-6">
+        <div className="mt-5 flex items-center justify-between border-t border-white/[0.07] pt-5">
           <button
-            onClick={() => setGuidePage((p) => Math.max(0, p - 1))}
-            disabled={guidePage === 0}
-            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+            onClick={() => setGuidePage((p) => (p === 0 ? 4 : p - 1))}
+            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors"
           >
             ← 이전 장
           </button>
@@ -500,9 +536,8 @@ export default function Index() {
             ))}
           </div>
           <button
-            onClick={() => setGuidePage((p) => Math.min(4, p + 1))}
-            disabled={guidePage === 4}
-            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors disabled:opacity-25 disabled:cursor-not-allowed"
+            onClick={() => setGuidePage((p) => (p + 1) % 5)}
+            className="text-[10px] tracking-[0.22em] text-white/55 hover:text-accent-c transition-colors"
           >
             다음 장 →
           </button>
