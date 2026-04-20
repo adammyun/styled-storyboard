@@ -330,7 +330,9 @@ export default function Index() {
           <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5">
             EDITOR'S PICK<span className="block w-7 h-px bg-accent-c" />
           </p>
-          <span className="text-[9px] tracking-[0.18em] text-accent-c bg-accent-soft px-3 py-1 rounded-full transition-all">{CONCEPT_LABEL[concept]}</span>
+          <span className="text-[9px] tracking-[0.18em] text-accent-c bg-accent-soft px-3 py-1 rounded-full transition-all">
+            {concept === "track" ? `Track : 052 · ${CONCEPT_LABEL[pickConcept]}` : CONCEPT_LABEL[concept]}
+          </span>
         </div>
         <div key={concept} className="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-14 items-start animate-fade-up">
           <div className="reveal group relative aspect-[4/3] overflow-hidden rounded-sm bg-[hsl(var(--ink-faint))]">
