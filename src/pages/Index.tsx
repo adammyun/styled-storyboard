@@ -1,26 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-type Concept = "gatgil" | "saetgil" | "jireum";
+type Concept = "track" | "gatgil" | "saetgil" | "jireum";
+type PickConcept = Exclude<Concept, "track">;
 
 const CONCEPT_LABEL: Record<Concept, string> = {
+  track: "Track : 052",
   gatgil: "갓길",
   saetgil: "샛길",
   jireum: "지름길",
 };
 const CONCEPT_DESC: Record<Concept, string> = {
+  track: "ULSAN HIDDEN TRACK — 오늘의 길을 골라보세요",
   gatgil: "GATGIL — 잠시 쉬어가는 길",
   saetgil: "SAETGIL — 아무도 모르는 예쁜 길",
   jireum: "JIREUM — 현지인만 아는 빠른 길",
 };
 
 // 순환 순서: 선택한 요소 기준으로 [left, center(selected), right]
-const CYCLE: Concept[] = ["gatgil", "saetgil", "jireum"];
+const CYCLE: Concept[] = ["track", "gatgil", "saetgil", "jireum"];
 const cycleAround = (c: Concept) => {
   const i = CYCLE.indexOf(c);
+  const n = CYCLE.length;
   return {
-    left: CYCLE[(i + 2) % 3],
+    left: CYCLE[(i + n - 1) % n],
     center: c,
-    right: CYCLE[(i + 1) % 3],
+    right: CYCLE[(i + 1) % n],
   };
 };
 
