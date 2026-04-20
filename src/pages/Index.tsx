@@ -334,7 +334,7 @@ export default function Index() {
             {concept === "track" ? `Track : 052 · ${CONCEPT_LABEL[pickConcept]}` : CONCEPT_LABEL[concept]}
           </span>
         </div>
-        <div key={concept} className="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-14 items-start animate-fade-up">
+        <div key={pickConcept} className="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-14 items-start animate-fade-up">
           <div className="reveal group relative aspect-[4/3] overflow-hidden rounded-sm bg-[hsl(var(--ink-faint))]">
             <DayNightImg base={pick.img} alt={pick.title.join(" ")} isNight={isNight} className="transition-transform duration-700 group-hover:scale-[1.04]" />
           </div>
