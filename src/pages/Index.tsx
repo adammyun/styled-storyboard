@@ -279,13 +279,13 @@ export default function Index() {
         {/* 대괄호 위치 고정 — 안의 텍스트만 교체, 좌우 이웃 컨셉 동시 노출 */}
         <div className="relative z-10 flex flex-col items-center w-full max-w-6xl animate-fade-up">
           <div className="flex items-center justify-center gap-3 md:gap-6 lg:gap-8 w-full">
-            <span
+            <div
               key={`left-${slotKey}-${cycle.left}`}
               aria-hidden="true"
               className={`hidden md:flex max-w-[18vw] items-center justify-end whitespace-nowrap font-serif-kr text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-opacity ${slotDir === "r" ? "animate-slide-in-l" : "animate-slide-in-r"}`}
             >
               {CONCEPT_LABEL[cycle.left]}
-            </span>
+            </div>
 
             <button
               onClick={() => {
@@ -301,32 +301,32 @@ export default function Index() {
             >
               <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none shrink-0">[</span>
 
-              <span
-                className="relative inline-flex items-center justify-center overflow-x-hidden overflow-y-visible align-middle shrink-0"
-                style={{ width: "clamp(13rem, 40vw, 28rem)", minHeight: "clamp(4.25rem, 9vw, 7rem)" }}
+              <div
+                className="relative flex items-center justify-center overflow-hidden align-middle shrink-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                style={{ width: "clamp(13rem, 40vw, 28rem)", height: "clamp(5rem, 10vw, 8rem)" }}
               >
-                <span
+                <div
                   key={`center-${slotKey}-${cycle.center}`}
-                  className={`absolute inset-0 inline-flex items-center justify-center whitespace-nowrap px-2 md:px-3 font-serif-kr text-accent-c leading-[1.2] -tracking-[0.02em] ${
+                  className={`absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center justify-center whitespace-nowrap px-2 md:px-3 pb-[0.08em] font-serif-kr text-accent-c leading-none -tracking-[0.02em] will-change-transform ${
                     concept === "track"
                       ? "text-[2rem] md:text-[3.35rem] lg:text-[4.2rem]"
                       : "text-[2.35rem] md:text-[3.9rem] lg:text-[5rem]"
                   } ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
                 >
                   {CONCEPT_LABEL[cycle.center]}
-                </span>
-              </span>
+                </div>
+              </div>
 
               <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none shrink-0">]</span>
             </button>
 
-            <span
+            <div
               key={`right-${slotKey}-${cycle.right}`}
               aria-hidden="true"
               className={`hidden md:flex max-w-[18vw] items-center justify-start whitespace-nowrap font-serif-kr text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-opacity ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
             >
               {CONCEPT_LABEL[cycle.right]}
-            </span>
+            </div>
           </div>
 
           {/* 컨셉 셀렉터 — 가는 가로선 위에 4개 라벨 */}
