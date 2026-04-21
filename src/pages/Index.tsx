@@ -292,19 +292,18 @@ export default function Index() {
             {/* [ — 위치 고정 */}
             <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none">[</span>
 
-            {/* 텍스트 슬롯 — 고정 폭, 내용만 페이드 */}
+            {/* 텍스트 슬롯 — 고정 폭, 좌/우에서 슬라이드 인 */}
             <span
-              className="relative block min-w-[7.5rem] md:min-w-[14rem] lg:min-w-[18rem] h-[1em] overflow-hidden"
-              style={{ height: "1.05em" }}
+              className="relative block min-w-[12rem] md:min-w-[20rem] lg:min-w-[26rem] overflow-hidden px-2"
+              style={{ height: "1.15em" }}
             >
               <span
-                key={concept === "track" ? `track-${trackPick}` : concept}
-                className={`absolute inset-0 flex items-center justify-center font-serif-kr text-accent-c leading-none -tracking-[0.02em] whitespace-nowrap ${
+                key={slotKey}
+                className={`absolute inset-0 flex items-center justify-center font-serif-kr text-accent-c leading-[1.05] -tracking-[0.02em] whitespace-nowrap ${
                   concept === "track"
                     ? "text-3xl md:text-5xl lg:text-6xl"
                     : "text-4xl md:text-6xl lg:text-7xl"
-                }`}
-                style={{ animation: "fade-up .6s cubic-bezier(.22,1,.36,1) both" }}
+                } ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
               >
                 {CONCEPT_LABEL[cycle.center]}
               </span>
