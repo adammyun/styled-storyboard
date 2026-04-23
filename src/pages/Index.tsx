@@ -30,43 +30,47 @@ const cycleAround = (c: Concept) => {
 
 const PICKS: Record<PickConcept, {
   img: string; type: string; title: string[]; loc: string; essay: string[]; badges: string[];
+  density: number; safety: number;
 }> = {
   gatgil: {
     img: "pick-seonam", type: "갓길 — 잠시 쉬어가는 길",
     title: ["선암호수 벤치,", "아무것도 안 해도 되는 곳"], loc: "울산 남구 선암동 · 선암호수공원",
     essay: ["호수 옆 벤치에 앉으면 시간이 다르게 흐른다.", "오리들이 물 위를 지나가고, 바람이 불어오고,", "아무것도 하지 않아도 괜찮다는 기분이", "조용히 찾아오는 울산의 갓길."],
     badges: ["도보 30분", "쉬움", "연중 추천", "반려동물 가능"],
+    density: 3, safety: 4,
   },
   saetgil: {
     img: "pick-seongnam", type: "샛길 — 아무도 모르는 예쁜 길",
     title: ["성남동 뒷골목,", "유명하지 않아서 더 좋은"], loc: "울산 중구 성남동 · 번영로 뒷편",
     essay: ["번화가 뒤편으로 한 블록만 들어가면", "오래된 담벼락에 꽃이 피어있다.", "관광 안내도에는 없는 그 골목이", "이 도시에서 가장 예쁜 샛길이다."],
     badges: ["도보 15분", "쉬움", "봄·가을", "사진 명소"],
+    density: 2, safety: 3,
   },
   jireum: {
     img: "pick-hakseong", type: "지름길 — 현지인만 아는 빠른 길",
     title: ["학성공원 뒷길,", "30분을 아끼는 현지인 루트"], loc: "울산 중구 학성동 · 학성공원 북쪽 사면",
     essay: ["정식 등산로를 따라가면 돌아가는 길,", "공원 북쪽 담장을 따라 걸으면", "30분이 절약된다. 게다가 중간에 나오는", "전망 포인트는 정식 코스에는 없다."],
     badges: ["도보 25분", "보통", "아침 추천", "뷰포인트"],
+    density: 4, safety: 3,
   },
 };
 
-type ArchItem = { img: string; type: string; name: string; meta: string; tags: string; extra?: boolean };
+type ArchItem = { img: string; type: string; name: string; meta: string; tags: string; extra?: boolean; density: number; safety: number };
 const NAMGU: ArchItem[] = [
-  { img: "arch-samsan-alley", type: "샛길", name: "삼산동 주택가 골목", meta: "남구 · 20분 · 쉬움", tags: "namgu" },
-  { img: "arch-jangseongpo", type: "갓길", name: "장생포 고래문화마을", meta: "남구 · 40분 · 쉬움", tags: "namgu" },
-  { img: "arch-seonam-shortcut", type: "지름길", name: "선암호수공원 숏컷", meta: "남구 · 25분 · 쉬움", tags: "namgu" },
-  { img: "arch-sinjeong-mural", type: "샛길", name: "신정동 벽화 골목", meta: "남구 · 25분 · 쉬움", tags: "namgu", extra: true },
-  { img: "arch-namgu-riverside", type: "갓길", name: "남구 강변 둘레길", meta: "남구 · 50분 · 쉬움", tags: "namgu", extra: true },
-  { img: "arch-sinjeong-market", type: "지름길", name: "신정 시장 뒷길", meta: "남구 · 15분 · 쉬움", tags: "namgu", extra: true },
+  { img: "arch-samsan-alley", type: "샛길", name: "삼산동 주택가 골목", meta: "남구 · 20분 · 쉬움", tags: "namgu", density: 3, safety: 3 },
+  { img: "arch-jangseongpo", type: "갓길", name: "장생포 고래문화마을", meta: "남구 · 40분 · 쉬움", tags: "namgu", density: 4, safety: 4 },
+  { img: "arch-seonam-shortcut", type: "지름길", name: "선암호수공원 숏컷", meta: "남구 · 25분 · 쉬움", tags: "namgu", density: 3, safety: 4 },
+  { img: "arch-sinjeong-mural", type: "샛길", name: "신정동 벽화 골목", meta: "남구 · 25분 · 쉬움", tags: "namgu", extra: true, density: 2, safety: 3 },
+  { img: "arch-namgu-riverside", type: "갓길", name: "남구 강변 둘레길", meta: "남구 · 50분 · 쉬움", tags: "namgu", extra: true, density: 4, safety: 4 },
+  { img: "arch-sinjeong-market", type: "지름길", name: "신정 시장 뒷길", meta: "남구 · 15분 · 쉬움", tags: "namgu", extra: true, density: 5, safety: 3 },
 ];
 const JUNGGU: ArchItem[] = [
-  { img: "arch-taehwa-reeds", type: "갓길", name: "태화강 둔치 억새밭", meta: "중구 · 20분 · 쉬움", tags: "junggu" },
-  { img: "arch-seongnam-flower", type: "샛길", name: "성남동 꽃담 골목", meta: "중구 · 15분 · 쉬움", tags: "junggu" },
-  { img: "arch-hakseong-trail", type: "지름길", name: "학성공원 우회 산책로", meta: "중구 · 30분 · 보통", tags: "junggu" },
-  { img: "arch-jungang-market", type: "샛길", name: "중앙시장 뒷골목", meta: "중구 · 20분 · 쉬움", tags: "junggu", extra: true },
-  { img: "arch-taehwa-bridge", type: "갓길", name: "태화교 다리 산책길", meta: "중구 · 30분 · 쉬움", tags: "junggu", extra: true },
-  { img: "arch-hakseong-ridge", type: "지름길", name: "학성 능선 지름길", meta: "중구 · 20분 · 보통", tags: "junggu", extra: true },
+  { img: "arch-taehwa-reeds", type: "갓길", name: "태화강 둔치 억새밭", meta: "중구 · 20분 · 쉬움", tags: "junggu", density: 5, safety: 5 },
+  { img: "arch-seongnam-flower", type: "샛길", name: "성남동 꽃담 골목", meta: "중구 · 15분 · 쉬움", tags: "junggu", density: 2, safety: 3 },
+  { img: "arch-hakseong-trail", type: "지름길", name: "학성공원 우회 산책로", meta: "중구 · 30분 · 보통", tags: "junggu", density: 3, safety: 3 },
+  { img: "arch-jungang-market", type: "샛길", name: "중앙시장 뒷골목", meta: "중구 · 20분 · 쉬움", tags: "junggu", extra: true, density: 4, safety: 2 },
+  { img: "arch-taehwa-bridge", type: "갓길", name: "태화교 다리 산책길", meta: "중구 · 30분 · 쉬움", tags: "junggu", extra: true, density: 4, safety: 4 },
+  { img: "arch-hakseong-ridge", type: "지름길", name: "학성 능선 지름길", meta: "중구 · 20분 · 보통", tags: "junggu", extra: true, density: 2, safety: 2 },
 ];
 
 // 무드보드 — 낮/밤 별도 이미지. 밤은 같은 장소의 또다른 자연 야경.
@@ -145,6 +149,27 @@ function MoodImg({ day, night, alt, isNight }: { day: string; night: string; alt
         onError={(e) => { (e.currentTarget as HTMLImageElement).src = `/images/${day}.jpg`; }}
         className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${isNight ? "opacity-100" : "opacity-0"}`} loading="lazy" />
     </>
+  );
+}
+
+// 5점 도트 인디케이터 — 낮: 인구 밀집도 / 밤: 혼자 다닐 때 안전도
+function Dots({ value, label, tone = "ink", size = "sm" }: { value: number; label: string; tone?: "ink" | "light"; size?: "sm" | "xs" }) {
+  const v = Math.max(0, Math.min(5, value));
+  const dot = size === "xs" ? "w-1.5 h-1.5" : "w-2 h-2";
+  const filled = "bg-accent-c border-[hsl(var(--accent))]";
+  const empty = tone === "light"
+    ? "bg-transparent border-white/30"
+    : "bg-transparent border-[hsl(var(--ink-faint))]";
+  const labelColor = tone === "light" ? "text-white/55" : "text-ink-light";
+  return (
+    <div className="inline-flex items-center gap-2" aria-label={`${label} ${v} / 5`}>
+      <span className={`text-[9px] tracking-[0.2em] ${labelColor} uppercase`}>{label}</span>
+      <span className="inline-flex items-center gap-1">
+        {[0,1,2,3,4].map((i) => (
+          <span key={i} className={`${dot} rounded-full border transition-colors ${i < v ? filled : empty}`} />
+        ))}
+      </span>
+    </div>
   );
 }
 
@@ -393,7 +418,13 @@ export default function Index() {
             <h2 className="font-serif-kr text-2xl md:text-[28px] leading-[1.35] mb-2 text-ink">
               {pick.title.map((t, i) => <span key={i}>{t}<br/></span>)}
             </h2>
-            <p className="text-[11px] text-ink-light tracking-wider mb-6 pb-6 border-b border-faint">{pick.loc}</p>
+            <p className="text-[11px] text-ink-light tracking-wider mb-4">{pick.loc}</p>
+            <div className="mb-6 pb-6 border-b border-faint">
+              <Dots
+                value={isNight ? pick.safety : pick.density}
+                label={isNight ? "혼자 안전도" : "인구 밀집도"}
+              />
+            </div>
             <p className="font-serif-kr italic text-sm text-ink-mid leading-[2.1] mb-7">
               {pick.essay.map((l, i) => <span key={i}>{l}<br/></span>)}
             </p>
@@ -445,7 +476,8 @@ export default function Index() {
                   </div>
                   <p className="text-[9px] tracking-[0.18em] text-accent-c mb-1">{it.type}</p>
                   <p className="font-serif-kr text-[15px] text-ink mb-1">{it.name}</p>
-                  <p className="text-[10px] text-ink-light tracking-wide">{it.meta}</p>
+                  <p className="text-[10px] text-ink-light tracking-wide mb-2">{it.meta}</p>
+                  <Dots size="xs" value={isNight ? it.safety : it.density} label={isNight ? "안전" : "혼잡"} />
                 </article>
               ))}
             </div>
@@ -475,7 +507,8 @@ export default function Index() {
                   </div>
                   <p className="text-[9px] tracking-[0.18em] text-accent-c mb-1">{it.type}</p>
                   <p className="font-serif-kr text-[15px] text-ink mb-1">{it.name}</p>
-                  <p className="text-[10px] text-ink-light tracking-wide">{it.meta}</p>
+                  <p className="text-[10px] text-ink-light tracking-wide mb-2">{it.meta}</p>
+                  <Dots size="xs" value={isNight ? it.safety : it.density} label={isNight ? "안전" : "혼잡"} />
                 </article>
               ))}
             </div>
