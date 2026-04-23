@@ -507,7 +507,8 @@ export default function Index() {
                   </div>
                   <p className="text-[9px] tracking-[0.18em] text-accent-c mb-1">{it.type}</p>
                   <p className="font-serif-kr text-[15px] text-ink mb-1">{it.name}</p>
-                  <p className="text-[10px] text-ink-light tracking-wide">{it.meta}</p>
+                  <p className="text-[10px] text-ink-light tracking-wide mb-2">{it.meta}</p>
+                  <Dots size="xs" value={isNight ? it.safety : it.density} label={isNight ? "안전" : "혼잡"} />
                 </article>
               ))}
             </div>
