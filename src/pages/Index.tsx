@@ -422,7 +422,7 @@ export default function Index() {
             <div className="mb-6 pb-6 border-b border-faint">
               <Dots
                 value={isNight ? pick.safety : pick.density}
-                label={isNight ? "혼자 안전도" : "인구 밀집도"}
+                label={isNight ? "밤길 안전도" : "인구 밀집도"}
               />
             </div>
             <p className="font-serif-kr italic text-sm text-ink-mid leading-[2.1] mb-7">
