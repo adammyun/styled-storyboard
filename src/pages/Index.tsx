@@ -445,8 +445,8 @@ export default function Index() {
         </p>
         <div className="reveal flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-9">
           <div>
-            <h2 className="font-serif-kr text-3xl text-ink">울산의 길목들</h2>
-            <p className="text-[11px] text-ink-light mt-1">남구 · 중구를 중심으로 기록한 길</p>
+            <h2 className="font-serif-kr text-4xl md:text-5xl text-ink leading-tight">울산의 길목들</h2>
+            <p className="text-[12px] text-ink-light mt-2">남구 · 중구를 중심으로 기록한 길</p>
           </div>
           <div className="flex flex-wrap gap-1.5 md:justify-end">
             {([["all","전체"],["namgu","남구"],["junggu","중구"]] as const).map(([k,l])=>(
