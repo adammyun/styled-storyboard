@@ -320,15 +320,17 @@ export default function Index() {
         <div className="relative z-10 flex flex-col items-center w-full max-w-6xl animate-fade-up">
           <div className="flex items-center justify-center gap-3 md:gap-6 lg:gap-8 w-full">
             <button
+              type="button"
               key={`left-${slotKey}-${cycle.left}`}
               onClick={() => setHeroConcept(cycle.left)}
               aria-label={`${CONCEPT_LABEL[cycle.left]}로 전환`}
-              className={`hidden md:flex w-[clamp(6rem,18vw,14rem)] items-center justify-end whitespace-nowrap font-serif-kr text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-l" : "animate-slide-in-r"}`}
+              className={`flex w-[clamp(3.25rem,18vw,14rem)] items-center justify-end whitespace-nowrap font-serif-kr text-lg md:text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-l" : "animate-slide-in-r"}`}
             >
               {CONCEPT_LABEL[cycle.left]}
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 const idx = PICK_CYCLE.indexOf(displayConcept);
                 setHeroConcept(PICK_CYCLE[(idx + 1) % PICK_CYCLE.length]);
@@ -356,10 +358,11 @@ export default function Index() {
             </button>
 
             <button
+              type="button"
               key={`right-${slotKey}-${cycle.right}`}
               onClick={() => setHeroConcept(cycle.right)}
               aria-label={`${CONCEPT_LABEL[cycle.right]}로 전환`}
-              className={`hidden md:flex w-[clamp(6rem,18vw,14rem)] items-center justify-start whitespace-nowrap font-serif-kr text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
+              className={`flex w-[clamp(3.25rem,18vw,14rem)] items-center justify-start whitespace-nowrap font-serif-kr text-lg md:text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
             >
               {CONCEPT_LABEL[cycle.right]}
             </button>
