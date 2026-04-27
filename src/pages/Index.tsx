@@ -18,6 +18,7 @@ const CONCEPT_DESC: Record<Concept, string> = {
 
 // 순환 순서: 선택한 요소 기준으로 [left, center(selected), right]
 const CYCLE: Concept[] = ["track", "gatgil", "saetgil", "jireum"];
+const PICK_CYCLE: PickConcept[] = ["gatgil", "saetgil", "jireum"];
 const cycleAround = (c: Concept) => {
   const i = CYCLE.indexOf(c);
   const n = CYCLE.length;
@@ -25,6 +26,15 @@ const cycleAround = (c: Concept) => {
     left: CYCLE[(i + n - 1) % n],
     center: c,
     right: CYCLE[(i + 1) % n],
+  };
+};
+const cycleAroundPick = (c: PickConcept) => {
+  const i = PICK_CYCLE.indexOf(c);
+  const n = PICK_CYCLE.length;
+  return {
+    left: PICK_CYCLE[(i + n - 1) % n],
+    center: c,
+    right: PICK_CYCLE[(i + 1) % n],
   };
 };
 
