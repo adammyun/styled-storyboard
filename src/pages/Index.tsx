@@ -509,7 +509,7 @@ export default function Index() {
 
       {/* Editor's Pick */}
       <motion.section id="pick" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-24 bg-paper transition-colors duration-700">
-        <ParallaxLayer offset={36}>
+        <ParallaxLayer offset={90}>
         <div className="flex items-baseline justify-between mb-12">
           <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5">
             EDITOR'S PICK<span className="block w-7 h-px bg-accent-c" />
@@ -550,7 +550,7 @@ export default function Index() {
 
       {/* Archive */}
       <motion.section id="archive" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-24 bg-card-bg transition-colors duration-700">
-        <ParallaxLayer offset={42}>
+        <ParallaxLayer offset={110}>
         <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5 mb-6">
           ARCHIVE<span className="block w-7 h-px bg-accent-c" />
         </p>
@@ -654,7 +654,7 @@ export default function Index() {
 
       {/* Guide — 페이지 넘김 */}
       <motion.section id="guide" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-20 bg-guide transition-colors duration-700">
-        <ParallaxLayer offset={32}>
+        <ParallaxLayer offset={80}>
         <div className="flex items-center justify-between mb-6">
           <p className="reveal text-[9px] tracking-[0.3em] text-white/30 flex items-center gap-3.5">
             WALKING GUIDE<span className="block w-7 h-px bg-accent-c" />
@@ -747,7 +747,7 @@ export default function Index() {
 
       {/* Moodboard */}
       <motion.section id="moodboard" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-24 bg-paper transition-colors duration-700">
-        <ParallaxLayer offset={48}>
+        <ParallaxLayer offset={120}>
         <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5 mb-6">
           PHOTO MOODBOARD<span className="block w-7 h-px bg-accent-c" />
         </p>
