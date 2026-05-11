@@ -500,10 +500,12 @@ export default function Index() {
             <a href="#" className="text-[10px] tracking-[0.18em] text-ink border-b border-current pb-0.5 hover:text-accent-c transition-colors">지도에서 보기</a>
           </div>
         </div>
+        </ParallaxLayer>
       </motion.section>
 
       {/* Archive */}
       <motion.section id="archive" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-24 bg-card-bg transition-colors duration-700">
+        <ParallaxLayer offset={42}>
         <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5 mb-6">
           ARCHIVE<span className="block w-7 h-px bg-accent-c" />
         </p>
