@@ -464,6 +464,7 @@ export default function Index() {
 
       {/* Editor's Pick */}
       <motion.section id="pick" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-24 bg-paper transition-colors duration-700">
+        <ParallaxLayer offset={36}>
         <div className="flex items-baseline justify-between mb-12">
           <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5">
             EDITOR'S PICK<span className="block w-7 h-px bg-accent-c" />
