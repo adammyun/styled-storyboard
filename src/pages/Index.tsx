@@ -449,7 +449,7 @@ export default function Index() {
       </motion.section>
 
       {/* Archive */}
-      <section id="archive" className="px-6 md:px-14 py-24 bg-card-bg transition-colors duration-700">
+      <motion.section id="archive" variants={sectionVariants} initial="hidden" whileInView="show" viewport={sectionViewport} className="px-6 md:px-14 py-24 bg-card-bg transition-colors duration-700">
         <p className="reveal text-[9px] tracking-[0.3em] text-ink-light flex items-center gap-3.5 mb-6">
           ARCHIVE<span className="block w-7 h-px bg-accent-c" />
         </p>
