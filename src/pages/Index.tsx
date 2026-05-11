@@ -428,13 +428,11 @@ export default function Index() {
           </g>
         </svg>
 
-        {/* 대괄호 위치 고정 — 좌우 요소 클릭으로 Track/갓길/샛길/지름길 전환 */}
+       {/* 대괄호 위치 고정 — 좌우 요소 클릭으로 Track/갓길/샛길/지름길 전환 */}
         <motion.div 
-          style={{ x: moveTextX, y: moveTextY }} // 👈 텍스트용 모션 적용
+          style={{ x: moveTextX, y: moveTextY }} 
           className="relative z-10 flex flex-col items-center w-full max-w-6xl animate-fade-up"
         >
-          {/* ... 내부 버튼들 코드는 그대로 유지 ... */}
-        </motion.div> {/* 👈 닫는 태그도 motion.div로 변경 */}
           <div className="flex items-center justify-center gap-3 md:gap-6 lg:gap-8 w-full">
             <button
               type="button"
@@ -484,7 +482,7 @@ export default function Index() {
               {CONCEPT_LABEL[cycle.right]}
             </button>
           </div>
-        </div>
+        </motion.div>
 
         <div className="relative z-10 mt-8 animate-fade-up">
           <p className="text-[9px] tracking-[0.32em] text-accent-c mb-2.5">ULSAN HIDDEN TRACK</p>
