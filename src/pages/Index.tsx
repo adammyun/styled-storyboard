@@ -275,13 +275,13 @@ export default function Index() {
   const springX = useSpring(mouseX, smoothConfig);
   const springY = useSpring(mouseY, smoothConfig);
 
-  // 이동 범위 설정 (배경은 마우스 반대로 40px 이동)
-  const moveBgX = useTransform(springX, [-0.5, 0.5], [40, -40]); 
-  const moveBgY = useTransform(springY, [-0.5, 0.5], [40, -40]);
+  // 이동 범위 설정 (배경은 마우스 방향으로 40px 이동)
+  const moveBgX = useTransform(springX, [-0.5, 0.5], [-40, 40]); 
+  const moveBgY = useTransform(springY, [-0.5, 0.5], [-40, 40]);
   
-  // 텍스트는 마우스 방향으로 입체감 있게 20px 이동 (배경과 깊이감 분리)
-  const moveTextX = useTransform(springX, [-0.5, 0.5], [-20, 20]); 
-  const moveTextY = useTransform(springY, [-0.5, 0.5], [-20, 20]);
+  // 텍스트는 마우스 반대 방향으로 입체감 있게 20px 이동 (배경과 깊이감 분리)
+  const moveTextX = useTransform(springX, [-0.5, 0.5], [20, -20]); 
+  const moveTextY = useTransform(springY, [-0.5, 0.5], [20, -20]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
