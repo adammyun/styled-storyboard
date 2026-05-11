@@ -720,6 +720,7 @@ export default function Index() {
             </div>
           ))}
         </div>
+        </ParallaxLayer>
       </motion.section>
 
       {/* Footer */}
