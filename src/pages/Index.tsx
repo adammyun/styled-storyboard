@@ -428,71 +428,77 @@ export default function Index() {
           </g>
         </svg>
 
-       {/* 대괄호 위치 고정 — 좌우 요소 클릭으로 Track/갓길/샛길/지름길 전환 */}
+   {/* === 중앙 콘텐츠 전체 (마우스 따라 이동) === */}
         <motion.div 
           style={{ x: moveTextX, y: moveTextY }} 
-          className="relative z-10 flex flex-col items-center w-full max-w-6xl animate-fade-up"
+          className="relative z-10 flex flex-col items-center w-full"
         >
-          <div className="flex items-center justify-center gap-3 md:gap-6 lg:gap-8 w-full">
-            <button
-              type="button"
-              key={`left-${slotKey}-${cycle.left}`}
-              onClick={() => setHeroConcept(cycle.left)}
-              aria-label={`${CONCEPT_LABEL[cycle.left]}로 전환`}
-              className={`flex w-[clamp(3.25rem,18vw,14rem)] items-center justify-end whitespace-nowrap font-serif-kr text-lg md:text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-l" : "animate-slide-in-r"}`}
-            >
-              {CONCEPT_LABEL[cycle.left]}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                const idx = CYCLE.indexOf(concept);
-                setHeroConcept(CYCLE[(idx + 1) % CYCLE.length]);
-              }}
-              aria-label={`${CONCEPT_LABEL[cycle.center]} 선택됨. 다음 길로 전환`}
-              className="group inline-flex items-center justify-center gap-2 md:gap-4 lg:gap-5 shrink-0"
-            >
-              <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none shrink-0">[</span>
-
-              <div
-                className="relative flex items-center justify-center overflow-hidden align-middle shrink-0"
-                style={{ width: "clamp(14.5rem, 42vw, 30rem)", height: "clamp(5.25rem, 10vw, 8.5rem)" }}
+          {/* 1. 대괄호 및 좌우 버튼 */}
+          <div className="w-full max-w-6xl animate-fade-up flex justify-center">
+            <div className="flex items-center justify-center gap-3 md:gap-6 lg:gap-8 w-full">
+              <button
+                type="button"
+                key={`left-${slotKey}-${cycle.left}`}
+                onClick={() => setHeroConcept(cycle.left)}
+                aria-label={`${CONCEPT_LABEL[cycle.left]}로 전환`}
+                className={`flex w-[clamp(3.25rem,18vw,14rem)] items-center justify-end whitespace-nowrap font-serif-kr text-lg md:text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-l" : "animate-slide-in-r"}`}
               >
-                <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                  <div
-                    key={`center-${slotKey}-${cycle.center}`}
-                    className={`inline-flex items-center justify-center whitespace-nowrap px-2 md:px-3 py-[0.14em] font-serif-kr text-accent-c leading-[1.08] text-[2.35rem] md:text-[3.9rem] lg:text-[5rem] will-change-transform ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
-                  >
-                    {CONCEPT_LABEL[cycle.center]}
+                {CONCEPT_LABEL[cycle.left]}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const idx = CYCLE.indexOf(concept);
+                  setHeroConcept(CYCLE[(idx + 1) % CYCLE.length]);
+                }}
+                aria-label={`${CONCEPT_LABEL[cycle.center]} 선택됨. 다음 길로 전환`}
+                className="group inline-flex items-center justify-center gap-2 md:gap-4 lg:gap-5 shrink-0"
+              >
+                <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none shrink-0">[</span>
+
+                <div
+                  className="relative flex items-center justify-center overflow-hidden align-middle shrink-0"
+                  style={{ width: "clamp(14.5rem, 42vw, 30rem)", height: "clamp(5.25rem, 10vw, 8.5rem)" }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                    <div
+                      key={`center-${slotKey}-${cycle.center}`}
+                      className={`inline-flex items-center justify-center whitespace-nowrap px-2 md:px-3 py-[0.14em] font-serif-kr text-accent-c leading-[1.08] text-[2.35rem] md:text-[3.9rem] lg:text-[5rem] will-change-transform ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
+                    >
+                      {CONCEPT_LABEL[cycle.center]}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none shrink-0">]</span>
-            </button>
+                <span className="font-display text-6xl md:text-8xl lg:text-9xl text-white/90 leading-none -tracking-[0.02em] select-none shrink-0">]</span>
+              </button>
 
-            <button
-              type="button"
-              key={`right-${slotKey}-${cycle.right}`}
-              onClick={() => setHeroConcept(cycle.right)}
-              aria-label={`${CONCEPT_LABEL[cycle.right]}로 전환`}
-              className={`flex w-[clamp(3.25rem,18vw,14rem)] items-center justify-start whitespace-nowrap font-serif-kr text-lg md:text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
-            >
-              {CONCEPT_LABEL[cycle.right]}
-            </button>
+              <button
+                type="button"
+                key={`right-${slotKey}-${cycle.right}`}
+                onClick={() => setHeroConcept(cycle.right)}
+                aria-label={`${CONCEPT_LABEL[cycle.right]}로 전환`}
+                className={`flex w-[clamp(3.25rem,18vw,14rem)] items-center justify-start whitespace-nowrap font-serif-kr text-lg md:text-2xl lg:text-4xl leading-[1.2] text-white/35 transition-colors hover:text-white/70 focus-visible:outline-none focus-visible:text-white/80 ${slotDir === "r" ? "animate-slide-in-r" : "animate-slide-in-l"}`}
+              >
+                {CONCEPT_LABEL[cycle.right]}
+              </button>
+            </div>
+          </div>
+
+          {/* 2. 서브타이틀 */}
+          <div className="mt-8 animate-fade-up text-center">
+            <p className="text-[9px] tracking-[0.32em] text-accent-c mb-2.5">ULSAN HIDDEN TRACK</p>
+            <p className="font-serif-kr italic text-sm md:text-base text-white/60 tracking-wide">울산의 길목에서, 오늘의 길을 찾습니다</p>
+          </div>
+          
+          {/* 3. 설명 뱃지 */}
+          <div className="mt-5 min-h-[22px] animate-fade-up">
+            <span className="text-[9px] tracking-[0.22em] text-white/55 px-3.5 py-1 border border-white/15 rounded-full backdrop-blur-sm">
+              {CONCEPT_DESC[concept]}
+            </span>
           </div>
         </motion.div>
-
-        <div className="relative z-10 mt-8 animate-fade-up">
-          <p className="text-[9px] tracking-[0.32em] text-accent-c mb-2.5">ULSAN HIDDEN TRACK</p>
-          <p className="font-serif-kr italic text-sm md:text-base text-white/60 tracking-wide">울산의 길목에서, 오늘의 길을 찾습니다</p>
-        </div>
-        <div className="relative z-10 mt-5 min-h-[22px] animate-fade-up">
-          <span className="text-[9px] tracking-[0.22em] text-white/55 px-3.5 py-1 border border-white/15 rounded-full backdrop-blur-sm">
-            {CONCEPT_DESC[concept]}
-          </span>
-        </div>
         <div className="absolute bottom-11 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2.5 z-10 animate-fade-up">
           <div className="w-px h-9 bg-white/25 relative overflow-hidden">
             <span className="absolute -top-full left-0 w-full h-full bg-accent-c" style={{ animation: "drop-line 2s 1.8s infinite ease" }} />
