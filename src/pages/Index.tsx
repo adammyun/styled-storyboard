@@ -1,5 +1,46 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+  type Variants,
+  type MotionValue,
+} from "framer-motion";
+
+// 부드러운 패럴랙스용 스프링 프리셋 (가볍고 컨트롤 잘 됨)
+const PARALLAX_SPRING = { stiffness: 80, damping: 20, mass: 0.4, restDelta: 0.001 } as const;
+
+// 섹션 단위 미세 패럴랙스 — 자체 ref + useScroll 로 윈도우 스크롤 리스너를 GPU 트랜스폼으로만 처리.
+// React state 를 거치지 않으므로 리렌더가 발생하지 않음.
+function ParallaxLayer({
+  children,
+  offset = 60,
+  className,
+}: {
+  children: ReactNode;
+  offset?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const raw = useTransform(scrollYProgress, [0, 1], [offset, -offset]);
+  const y = useSpring(raw, PARALLAX_SPRING);
+  return (
+    <motion.div
+      ref={ref}
+      style={reduce ? undefined : { y, willChange: "transform" }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 const sectionVariants: Variants = {
   hidden: { opacity: 0, y: 48 },
