@@ -355,8 +355,11 @@ export default function Index() {
 
       {/* Hero — 자연 친화 배경 + 낮/밤 크로스페이드 + 별 효과 */}
       <section ref={heroRef} id="hero" className="relative min-h-screen grain flex flex-col items-center justify-center px-6 text-center overflow-hidden bg-black">
-        {/* 자연 배경 (낮/밤) — 패럴랙스 */}
-        <motion.div className="absolute inset-0 will-change-transform" style={{ scale: heroScale, y: heroY }}>
+        {/* 자연 배경 (낮/밤) — 패럴랙스 (스프링 보간) */}
+        <motion.div
+          className="absolute inset-0 will-change-transform"
+          style={reduceMotion ? undefined : { scale: heroScale, y: heroY }}
+        >
           <img src="/images/hero-nature-day.jpg" alt=""
             onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/pick-taehwa-day.jpg"; }}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1400ms] ${isNight ? "opacity-0" : "opacity-100"}`} />
@@ -364,7 +367,11 @@ export default function Index() {
             onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/images/pick-taehwa-night.jpg"; }}
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1400ms] ${isNight ? "opacity-100" : "opacity-0"}`} />
         </motion.div>
-        <motion.div style={{ opacity: heroOverlayOpacity }} className="absolute inset-0 pointer-events-none" aria-hidden />
+        <motion.div
+          style={reduceMotion ? undefined : { opacity: heroOverlayOpacity }}
+          className="absolute inset-0 pointer-events-none"
+          aria-hidden
+        />
         {/* 더 어둡게 깔리는 그라디언트 — 텍스트 가독성 강화, 자연 분위기 유지 */}
         <div className="absolute inset-0 transition-colors duration-1000"
           style={{ background: isNight
