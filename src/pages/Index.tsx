@@ -271,6 +271,16 @@ export default function Index() {
     if (next !== "track") setTrackPick(next);
   };
 
+  // Hero parallax — slow zoom + downward drift while scrolling past hero
+  const heroRef = useRef<HTMLElement | null>(null);
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroScale = useTransform(heroProgress, [0, 1], [1, 1.18]);
+  const heroY = useTransform(heroProgress, [0, 1], ["0%", "12%"]);
+  const heroOverlayOpacity = useTransform(heroProgress, [0, 1], [1, 0.6]);
+
   return (
     <main className="bg-paper text-ink min-h-screen">
       {/* Intro */}
