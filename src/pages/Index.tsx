@@ -356,7 +356,7 @@ export default function Index() {
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const heroScaleRaw = useTransform(heroProgress, [0, 1], [1, 1.18]);
+  const heroScaleRaw = useTransform(heroProgress, [0, 1], [1.1, 1.25]);
   const heroYRaw = useTransform(heroProgress, [0, 1], ["0%", "12%"]);
   const heroOverlayRaw = useTransform(heroProgress, [0, 1], [1, 0.6]);
   const heroScale = useSpring(heroScaleRaw, PARALLAX_SPRING);
