@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 /**
  * Magazine article body — minimal editorial layout
- * - Narrow centered reading column
- * - Right margin: floating per-paragraph comments (Notion-style)
- * - Hover paragraph → reveal linked comment
- * - Click paragraph → add new comment in right margin
+ * - Refactored: Framer Motion added for scroll animations
+ * - Refactored: Extracted into reusable <MarginArticle> component
  */
 
 type Comment = {
@@ -17,6 +16,9 @@ type Comment = {
   createdAt: number;
 };
 
+// ==========================================
+// 1. Mock Data (테스트용 데이터)
+// ==========================================
 const PARAGRAPHS: { id: string; text: string }[] = [
   {
     id: "p1",
@@ -46,8 +48,63 @@ const SEED_COMMENTS: Comment[] = [
   { id: "c4", paragraphId: "p5", author: "Editor", text: "마무리 문단으로 자연스럽게 이어집니다.", createdAt: Date.now() - 1000 * 60 * 10 },
 ];
 
+// ==========================================
+// 2. Main Page Layout (메인 페이지 껍데기)
+// ==========================================
 export default function Article() {
-  const [comments, setComments] = useState<Comment[]>(SEED_COMMENTS);
+  return (
+    <main className="min-h-screen bg-paper text-ink grain">
+      {/* Top bar */}
+      <header className="border-b border-faint">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
+          <Link to="/" className="text-xs tracking-[0.3em] uppercase text-ink-mid hover:text-ink transition-colors">
+            ← Track : 052
+          </Link>
+          <div className="text-[10px] tracking-[0.3em] uppercase text-ink-light">Issue 03 · Editorial</div>
+        </div>
+      </header>
+
+      {/* Article masthead with Framer Motion fade-up */}
+      <motion.section 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="max-w-[1400px] mx-auto px-6 md:px-10 pt-20 pb-14"
+      >
+        <div className="max-w-[640px] mx-auto">
+          <div className="text-[10px] tracking-[0.35em] uppercase text-ink-light mb-6">Essay · 052</div>
+          <h1 className="font-display text-4xl md:text-5xl leading-[1.15] tracking-tight">
+            여백에 적어둔 도시,<br />그리고 길의 기록
+          </h1>
+          <p className="mt-6 text-sm text-ink-mid leading-relaxed">
+            글 — 편집부 · 사진 — 김도현 · 2026.05
+          </p>
+        </div>
+      </motion.section>
+
+      {/* Reusable Component injected here */}
+      <MarginArticle paragraphs={PARAGRAPHS} initialComments={SEED_COMMENTS} />
+
+      <footer className="border-t border-faint">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-10 text-[10px] tracking-[0.3em] uppercase text-ink-light flex justify-between">
+          <span>Track : 052</span>
+          <span>Editorial</span>
+        </div>
+      </footer>
+    </main>
+  );
+}
+
+// ==========================================
+// 3. Reusable Component (재사용 가능한 마진 코멘트 본문)
+// ==========================================
+interface MarginArticleProps {
+  paragraphs: { id: string; text: string }[];
+  initialComments: Comment[];
+}
+
+export function MarginArticle({ paragraphs, initialComments }: MarginArticleProps) {
+  const [comments, setComments] = useState<Comment[]>(initialComments);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [composeFor, setComposeFor] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
@@ -61,7 +118,7 @@ export default function Article() {
       if (!containerRef.current) return;
       const base = containerRef.current.getBoundingClientRect().top;
       const next: Record<string, number> = {};
-      for (const p of PARAGRAPHS) {
+      for (const p of paragraphs) {
         const el = paragraphRefs.current[p.id];
         if (el) next[p.id] = el.getBoundingClientRect().top - base;
       }
@@ -75,7 +132,7 @@ export default function Article() {
       ro.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [comments, composeFor]);
+  }, [comments, composeFor, paragraphs]);
 
   const commentsByParagraph = useMemo(() => {
     const map: Record<string, Comment[]> = {};
@@ -96,132 +153,106 @@ export default function Article() {
   };
 
   return (
-    <main className="min-h-screen bg-paper text-ink grain">
-      {/* Top bar */}
-      <header className="border-b border-faint">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex items-center justify-between">
-          <Link to="/" className="text-xs tracking-[0.3em] uppercase text-ink-mid hover:text-ink transition-colors">
-            ← Track : 052
-          </Link>
-          <div className="text-[10px] tracking-[0.3em] uppercase text-ink-light">Issue 03 · Editorial</div>
-        </div>
-      </header>
+    <section ref={containerRef} className="relative max-w-[1400px] mx-auto px-6 md:px-10 pb-32">
+      <div className="md:grid md:grid-cols-[1fr_minmax(0,640px)_1fr] md:gap-10">
+        {/* left margin spacer */}
+        <div aria-hidden className="hidden md:block" />
 
-      {/* Article masthead */}
-      <section className="max-w-[1400px] mx-auto px-6 md:px-10 pt-20 pb-14">
-        <div className="max-w-[640px] mx-auto">
-          <div className="text-[10px] tracking-[0.35em] uppercase text-ink-light mb-6">Essay · 052</div>
-          <h1 className="font-display text-4xl md:text-5xl leading-[1.15] tracking-tight">
-            여백에 적어둔 도시,<br />그리고 길의 기록
-          </h1>
-          <p className="mt-6 text-sm text-ink-mid leading-relaxed">
-            글 — 편집부 · 사진 — 김도현 · 2026.05
-          </p>
-        </div>
-      </section>
+        {/* reading column */}
+        <article className="font-serif-kr text-[18px] md:text-[19px] leading-[2] tracking-[-0.005em] text-ink space-y-7">
+          {paragraphs.map((p, index) => {
+            const isActive = activeId === p.id || composeFor === p.id;
+            return (
+              <motion.p
+                key={p.id}
+                ref={(el) => (paragraphRefs.current[p.id] = el as HTMLParagraphElement)}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-15%" }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+                onMouseEnter={() => setActiveId(p.id)}
+                onMouseLeave={() => setActiveId((cur) => (cur === p.id ? null : cur))}
+                onClick={() => {
+                  setComposeFor(p.id);
+                  setActiveId(p.id);
+                }}
+                className={[
+                  "relative cursor-text transition-all duration-500 ease-out",
+                  "border-r-2 pr-4 -mr-4",
+                  isActive ? "border-ink/30 text-ink" : "border-transparent text-ink/85",
+                ].join(" ")}
+              >
+                {p.text}
+              </motion.p>
+            );
+          })}
+        </article>
 
-      {/* Body with right-margin comments */}
-      <section ref={containerRef} className="relative max-w-[1400px] mx-auto px-6 md:px-10 pb-32">
-        <div className="md:grid md:grid-cols-[1fr_minmax(0,640px)_1fr] md:gap-10">
-          {/* left margin spacer */}
-          <div aria-hidden className="hidden md:block" />
-
-          {/* reading column */}
-          <article className="font-serif-kr text-[18px] md:text-[19px] leading-[2] tracking-[-0.005em] text-ink space-y-7">
-            {PARAGRAPHS.map((p) => {
-              const isActive = activeId === p.id || composeFor === p.id;
-              return (
-                <p
-                  key={p.id}
-                  ref={(el) => (paragraphRefs.current[p.id] = el)}
-                  onMouseEnter={() => setActiveId(p.id)}
-                  onMouseLeave={() => setActiveId((cur) => (cur === p.id ? null : cur))}
-                  onClick={() => {
-                    setComposeFor(p.id);
-                    setActiveId(p.id);
-                  }}
-                  className={[
-                    "relative cursor-text transition-all duration-500 ease-out",
-                    "border-r-2 pr-4 -mr-4",
-                    isActive ? "border-ink/30 text-ink" : "border-transparent text-ink/85",
-                  ].join(" ")}
-                >
-                  {p.text}
-                </p>
-              );
-            })}
-          </article>
-
-          {/* right margin: floating comments (desktop) */}
-          <aside className="hidden md:block relative">
-            {PARAGRAPHS.map((p) => {
-              const list = commentsByParagraph[p.id] || [];
-              const isActive = activeId === p.id || composeFor === p.id;
-              const top = offsets[p.id] ?? 0;
-              const isComposing = composeFor === p.id;
-              if (list.length === 0 && !isComposing) return null;
-              return (
+        {/* right margin: floating comments (desktop) */}
+        <aside className="hidden md:block relative">
+          {paragraphs.map((p) => {
+            const list = commentsByParagraph[p.id] || [];
+            const isActive = activeId === p.id || composeFor === p.id;
+            const top = offsets[p.id] ?? 0;
+            const isComposing = composeFor === p.id;
+            if (list.length === 0 && !isComposing) return null;
+            return (
+              <div
+                key={p.id}
+                className="absolute left-0 right-0 transition-all duration-500 ease-out"
+                style={{
+                  top,
+                  opacity: isActive ? 1 : 0.28,
+                  transform: isActive ? "translateX(0)" : "translateX(-4px)",
+                }}
+              >
+                {/* connector line */}
                 <div
-                  key={p.id}
-                  className="absolute left-0 right-0 transition-all duration-500 ease-out"
-                  style={{
-                    top,
-                    opacity: isActive ? 1 : 0.28,
-                    transform: isActive ? "translateX(0)" : "translateX(-4px)",
-                  }}
-                >
-                  {/* connector line */}
-                  <div
-                    aria-hidden
-                    className="absolute -left-10 top-3 h-px bg-ink/20 transition-all duration-500"
-                    style={{ width: isActive ? "2.25rem" : "1.25rem" }}
-                  />
-                  <div className="space-y-2 pr-2">
-                    {list.map((c) => (
-                      <CommentBubble key={c.id} comment={c} active={isActive} />
-                    ))}
-                    {isComposing && (
-                      <ComposeBubble
-                        value={draft}
-                        onChange={setDraft}
-                        onSubmit={() => submitComment(p.id)}
-                        onCancel={() => {
-                          setComposeFor(null);
-                          setDraft("");
-                        }}
-                      />
-                    )}
-                  </div>
+                  aria-hidden
+                  className="absolute -left-10 top-3 h-px bg-ink/20 transition-all duration-500"
+                  style={{ width: isActive ? "2.25rem" : "1.25rem" }}
+                />
+                <div className="space-y-2 pr-2">
+                  {list.map((c) => (
+                    <CommentBubble key={c.id} comment={c} active={isActive} />
+                  ))}
+                  {isComposing && (
+                    <ComposeBubble
+                      value={draft}
+                      onChange={setDraft}
+                      onSubmit={() => submitComment(p.id)}
+                      onCancel={() => {
+                        setComposeFor(null);
+                        setDraft("");
+                      }}
+                    />
+                  )}
                 </div>
-              );
-            })}
-          </aside>
-        </div>
-
-        {/* Mobile: comments inline below body */}
-        <div className="md:hidden mt-16 border-t border-faint pt-8 space-y-6">
-          <div className="text-[10px] tracking-[0.3em] uppercase text-ink-light">Margin notes</div>
-          {comments.map((c) => (
-            <div key={c.id} className="text-sm text-ink-mid">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-ink-light mb-1">
-                {PARAGRAPHS.findIndex((p) => p.id === c.paragraphId) + 1}문단 · {c.author}
               </div>
-              {c.text}
-            </div>
-          ))}
-        </div>
-      </section>
+            );
+          })}
+        </aside>
+      </div>
 
-      <footer className="border-t border-faint">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-10 text-[10px] tracking-[0.3em] uppercase text-ink-light flex justify-between">
-          <span>Track : 052</span>
-          <span>Editorial</span>
-        </div>
-      </footer>
-    </main>
+      {/* Mobile: comments inline below body */}
+      <div className="md:hidden mt-16 border-t border-faint pt-8 space-y-6">
+        <div className="text-[10px] tracking-[0.3em] uppercase text-ink-light">Margin notes</div>
+        {comments.map((c) => (
+          <div key={c.id} className="text-sm text-ink-mid">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-ink-light mb-1">
+              {paragraphs.findIndex((p) => p.id === c.paragraphId) + 1}문단 · {c.author}
+            </div>
+            {c.text}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
+// ==========================================
+// 4. Sub Components (코멘트 말풍선 및 입력창 UI)
+// ==========================================
 function CommentBubble({ comment, active }: { comment: Comment; active: boolean }) {
   return (
     <div
