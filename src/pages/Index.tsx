@@ -1,4 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+
+const sectionVariants: Variants = {
+  hidden: { opacity: 0, y: 48 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.08 },
+  },
+};
+const sectionViewport = { once: true, amount: 0.15 } as const;
 
 type Concept = "track" | "gatgil" | "saetgil" | "jireum";
 type PickConcept = Exclude<Concept, "track">;
