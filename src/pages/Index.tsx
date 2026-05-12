@@ -240,15 +240,7 @@ function Dots({ value, label, tone = "ink", size = "sm" }: { value: number; labe
 
 // ── 메인 ──────────────────────────────────────────────────────────
 export default function Index() {
-  const [selectedArchive, setSelectedArchive] = useState<ArchItem | null>(null);
-  useEffect(() => {
-    if (selectedArchive) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [selectedArchive]);
+  // 아카이브 상세는 /archive/:id 페이지로 이동합니다.
   const navigate = useNavigate();
   const [intro, setIntro] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -578,7 +570,7 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 md:gap-8">
               {namguList.map((it, i) => (
-                <article key={it.img} onClick={() => setSelectedArchive(it)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
+                <article key={it.img} onClick={() => navigate(`/archive/${it.img}`)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
                   <div className="relative aspect-[4/5] overflow-hidden mb-4 rounded-sm bg-[hsl(var(--ink-faint))]">
                     <ArchImg base={it.img} alt={it.name} isNight={isNight} />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -611,7 +603,7 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 md:gap-8">
               {jungguList.map((it, i) => (
-                <article key={it.img} onClick={() => setSelectedArchive(it)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
+                <article key={it.img} onClick={() => navigate(`/archive/${it.img}`)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
                   <div className="relative aspect-[4/5] overflow-hidden mb-4 rounded-sm bg-[hsl(var(--ink-faint))]">
                     <ArchImg base={it.img} alt={it.name} isNight={isNight} />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -792,50 +784,7 @@ export default function Index() {
           </div>
         </div>
       </footer>
-      <AnimatePresence>
-        {selectedArchive && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-10 bg-black/80 backdrop-blur-md"
-            onClick={() => setSelectedArchive(null)} // 배경 클릭 시 닫힘
-          >
-            <motion.div
-              initial={{ y: 50, opacity: 0, scale: 0.95 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 20, opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="relative w-full max-w-[1200px] h-full max-h-[90vh] overflow-y-auto bg-paper text-ink rounded-sm shadow-2xl flex flex-col"
-              onClick={(e) => e.stopPropagation()} // 팝업 내부 클릭 시 안 닫히게 방지
-            >
-              {/* 닫기 버튼 */}
-              <button
-                onClick={() => setSelectedArchive(null)}
-                className="absolute top-6 right-6 z-50 text-ink-light hover:text-accent-c transition-colors p-2"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-              </button>
-
-              {/* 팝업 헤더 이미지 */}
-              <div className="relative w-full h-[30vh] md:h-[40vh] shrink-0 overflow-hidden bg-[hsl(var(--ink-faint))]">
-                <ArchImg base={selectedArchive.img} alt={selectedArchive.name} isNight={isNight} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-white">
-                  <p className="text-[10px] tracking-[0.2em] text-accent-c mb-2">{selectedArchive.type}</p>
-                  <h2 className="font-serif-kr text-3xl md:text-5xl leading-tight">{selectedArchive.name}</h2>
-                </div>
-              </div>
-
-              {/* 팝업 본문 (여기에 나중에 v0로 만든 내용이 들어갑니다) */}
-              <div className="p-8 md:p-14 md:py-20 flex-1 flex flex-col items-center">
-                <p className="font-serif-kr text-xl text-ink-mid text-center mb-10">이곳에 <b>{selectedArchive.name}</b>의 상세 아티클과<br/>디지털 굿즈 다운로드 섹션이 들어갑니다.</p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {/* 👆 여기까지 팝업 모달 영역 👆 */}
+      {/* 아카이브 상세는 /archive/:id 라우트로 이동했습니다 */}
     </main>
   );
 }

@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Article from "./pages/Article.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Archive from "./pages/Archive.tsx";
+import ArchiveDetail from "./pages/ArchiveDetail.tsx";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/article" element={<Article />} />
           <Route path="/archive" element={<Archive />} />
+          <Route path="/archive/:id" element={<ArchiveDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
