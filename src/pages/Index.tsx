@@ -796,7 +796,7 @@ export default function Index() {
           </div>
         </div>
       </footer>
-      {/* 아카이브 상세는 /archive/:id 라우트로 이동했습니다 */}
+      <ArchiveDetailModal id={openId} onClose={() => setOpenId(null)} />
     </main>
   );
 }
