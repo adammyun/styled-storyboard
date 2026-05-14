@@ -60,41 +60,45 @@ export default function ArrivalSection({ target, goodsUrl, goodsType, placeName,
               <span>TARGET · {target.lat.toFixed(4)}, {target.lon.toFixed(4)}</span>
             </div>
 
-            {status === "idle" && (
-              <>
-                <p className="font-serif-kr text-[17px] text-ink mb-5 leading-relaxed">
-                  지금 {placeName}에 도착하셨다면 위치를 인증하고 굿즈를 받아보세요.
-                </p>
-                <button
-                  onClick={start}
-                  disabled={insecure}
-                  className="text-[11px] tracking-[0.2em] uppercase px-5 py-2.5 rounded-full border border-ink text-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  위치 확인하기
-                </button>
-              </>
-            )}
-
-            {(status === "requesting" || status === "tracking") && (
-              <>
-                <p className="font-serif-kr text-[17px] text-ink mb-2 leading-relaxed">
-                  아직 길 위에 있나요? 목적지에 도착하면 굿즈가 해금됩니다.
-                </p>
-                {distance !== null && (
-                  <p className="text-[12px] text-ink-light tabular-nums">
-                    현재 거리 · 약 {formatDistance(distance)}
-                  </p>
-                )}
-                {status === "requesting" && (
-                  <p className="text-[11px] text-ink-light mt-2">위치를 가져오는 중…</p>
-                )}
-              </>
-            )}
-
-            {status === "arrived" && (
+            {arrived ? (
               <p className="font-serif-kr text-[18px] text-ink leading-relaxed">
-                도착을 확인했어요. 오른쪽에서 굿즈를 받아보세요.
+                {forceUnlocked && status !== "arrived"
+                  ? "개발자 모드: GPS를 우회해 굿즈가 해금되었어요."
+                  : "도착을 확인했어요. 오른쪽에서 굿즈를 받아보세요."}
               </p>
+            ) : (
+              <>
+                {status === "idle" && (
+                  <>
+                    <p className="font-serif-kr text-[17px] text-ink mb-5 leading-relaxed">
+                      지금 {placeName}에 도착하셨다면 위치를 인증하고 굿즈를 받아보세요.
+                    </p>
+                    <button
+                      onClick={start}
+                      disabled={insecure}
+                      className="text-[11px] tracking-[0.2em] uppercase px-5 py-2.5 rounded-full border border-ink text-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      위치 확인하기
+                    </button>
+                  </>
+                )}
+
+                {(status === "requesting" || status === "tracking") && (
+                  <>
+                    <p className="font-serif-kr text-[17px] text-ink mb-2 leading-relaxed">
+                      아직 길 위에 있나요? 목적지에 도착하면 굿즈가 해금됩니다.
+                    </p>
+                    {distance !== null && (
+                      <p className="text-[12px] text-ink-light tabular-nums">
+                        현재 거리 · 약 {formatDistance(distance)}
+                      </p>
+                    )}
+                    {status === "requesting" && (
+                      <p className="text-[11px] text-ink-light mt-2">위치를 가져오는 중…</p>
+                    )}
+                  </>
+                )}
+              </>
             )}
 
             {status === "denied" && (
