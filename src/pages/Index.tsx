@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import ArchiveDetailModal from "@/components/ArchiveDetailModal";
 import {
   motion,
   useScroll,
@@ -94,10 +94,12 @@ const cycleAroundPick = (c: PickConcept) => {
 };
 
 const PICKS: Record<PickConcept, {
+  id: string;
   img: string; type: string; title: string[]; loc: string; essay: string[]; badges: string[];
   density: number; safety: number;
 }> = {
   gatgil: {
+    id: "arch-seonam-shortcut",
     img: "pick-seonam", type: "갓길 — 잠시 쉬어가는 길",
     title: ["선암호수 벤치,", "아무것도 안 해도 되는 곳"], loc: "울산 남구 선암동 · 선암호수공원",
     essay: ["호수 옆 벤치에 앉으면 시간이 다르게 흐른다.", "오리들이 물 위를 지나가고, 바람이 불어오고,", "아무것도 하지 않아도 괜찮다는 기분이", "조용히 찾아오는 울산의 갓길."],
@@ -105,6 +107,7 @@ const PICKS: Record<PickConcept, {
     density: 3, safety: 4,
   },
   saetgil: {
+    id: "arch-seongnam-flower",
     img: "pick-seongnam", type: "샛길 — 아무도 모르는 예쁜 길",
     title: ["성남동 뒷골목,", "유명하지 않아서 더 좋은"], loc: "울산 중구 성남동 · 번영로 뒷편",
     essay: ["번화가 뒤편으로 한 블록만 들어가면", "오래된 담벼락에 꽃이 피어있다.", "관광 안내도에는 없는 그 골목이", "이 도시에서 가장 예쁜 샛길이다."],
@@ -112,6 +115,7 @@ const PICKS: Record<PickConcept, {
     density: 2, safety: 3,
   },
   jireum: {
+    id: "arch-hakseong-trail",
     img: "pick-hakseong", type: "지름길 — 현지인만 아는 빠른 길",
     title: ["학성공원 뒷길,", "30분을 아끼는 현지인 루트"], loc: "울산 중구 학성동 · 학성공원 북쪽 사면",
     essay: ["정식 등산로를 따라가면 돌아가는 길,", "공원 북쪽 담장을 따라 걸으면", "30분이 절약된다. 게다가 중간에 나오는", "전망 포인트는 정식 코스에는 없다."],
@@ -240,8 +244,8 @@ function Dots({ value, label, tone = "ink", size = "sm" }: { value: number; labe
 
 // ── 메인 ──────────────────────────────────────────────────────────
 export default function Index() {
-  // 아카이브 상세는 /archive/:id 페이지로 이동합니다.
-  const navigate = useNavigate();
+  // 아카이브 상세는 모달로 표시합니다.
+  const [openId, setOpenId] = useState<string | null>(null);
   const [intro, setIntro] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [isNight, setIsNight] = useState(false);
@@ -511,9 +515,17 @@ export default function Index() {
           </span>
         </div>
         <div key={pickConcept} className="grid md:grid-cols-[1.25fr_1fr] gap-10 md:gap-14 items-start animate-fade-up">
-          <div className="reveal group relative aspect-[4/3] overflow-hidden rounded-sm bg-[hsl(var(--ink-faint))]">
+          <button
+            type="button"
+            onClick={() => setOpenId(pick.id)}
+            className="reveal group relative aspect-[4/3] overflow-hidden rounded-sm bg-[hsl(var(--ink-faint))] text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]"
+            aria-label={`${pick.title.join(" ")} 자세히 보기`}
+          >
             <DayNightImg base={pick.img} alt={pick.title.join(" ")} isNight={isNight} className="transition-transform duration-700 group-hover:scale-[1.04]" />
-          </div>
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span className="font-serif-kr italic text-sm text-white">자세히 보기</span>
+            </div>
+          </button>
           <div className="reveal" style={{ transitionDelay: "120ms" }}>
             <p className="text-[9px] tracking-[0.2em] text-accent-c mb-3.5">{pick.type}</p>
             <h2 className="font-serif-kr text-2xl md:text-[28px] leading-[1.35] mb-2 text-ink">
@@ -534,7 +546,7 @@ export default function Index() {
                 <span key={b} className="text-[9px] px-2.5 py-1 border border-faint text-ink-mid tracking-wide rounded-full hover:border-[hsl(var(--accent))] hover:text-accent-c transition-colors cursor-default">{b}</span>
               ))}
             </div>
-            <a href="#" className="text-[10px] tracking-[0.18em] text-ink border-b border-current pb-0.5 hover:text-accent-c transition-colors">지도에서 보기</a>
+            <button type="button" onClick={() => setOpenId(pick.id)} className="text-[10px] tracking-[0.18em] text-ink border-b border-current pb-0.5 hover:text-accent-c transition-colors">자세히 보기</button>
           </div>
         </div>
         </ParallaxLayer>
@@ -570,7 +582,7 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 md:gap-8">
               {namguList.map((it, i) => (
-                <article key={it.img} onClick={() => navigate(`/archive/${it.img}`)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
+                <article key={it.img} onClick={() => setOpenId(it.img)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
                   <div className="relative aspect-[4/5] overflow-hidden mb-4 rounded-sm bg-[hsl(var(--ink-faint))]">
                     <ArchImg base={it.img} alt={it.name} isNight={isNight} />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -603,7 +615,7 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 md:gap-8">
               {jungguList.map((it, i) => (
-                <article key={it.img} onClick={() => navigate(`/archive/${it.img}`)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
+                <article key={it.img} onClick={() => setOpenId(it.img)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
                   <div className="relative aspect-[4/5] overflow-hidden mb-4 rounded-sm bg-[hsl(var(--ink-faint))]">
                     <ArchImg base={it.img} alt={it.name} isNight={isNight} />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -784,7 +796,7 @@ export default function Index() {
           </div>
         </div>
       </footer>
-      {/* 아카이브 상세는 /archive/:id 라우트로 이동했습니다 */}
+      <ArchiveDetailModal id={openId} onClose={() => setOpenId(null)} />
     </main>
   );
 }
