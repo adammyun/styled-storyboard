@@ -94,10 +94,12 @@ const cycleAroundPick = (c: PickConcept) => {
 };
 
 const PICKS: Record<PickConcept, {
+  id: string;
   img: string; type: string; title: string[]; loc: string; essay: string[]; badges: string[];
   density: number; safety: number;
 }> = {
   gatgil: {
+    id: "arch-seonam-shortcut",
     img: "pick-seonam", type: "갓길 — 잠시 쉬어가는 길",
     title: ["선암호수 벤치,", "아무것도 안 해도 되는 곳"], loc: "울산 남구 선암동 · 선암호수공원",
     essay: ["호수 옆 벤치에 앉으면 시간이 다르게 흐른다.", "오리들이 물 위를 지나가고, 바람이 불어오고,", "아무것도 하지 않아도 괜찮다는 기분이", "조용히 찾아오는 울산의 갓길."],
@@ -105,6 +107,7 @@ const PICKS: Record<PickConcept, {
     density: 3, safety: 4,
   },
   saetgil: {
+    id: "arch-seongnam-flower",
     img: "pick-seongnam", type: "샛길 — 아무도 모르는 예쁜 길",
     title: ["성남동 뒷골목,", "유명하지 않아서 더 좋은"], loc: "울산 중구 성남동 · 번영로 뒷편",
     essay: ["번화가 뒤편으로 한 블록만 들어가면", "오래된 담벼락에 꽃이 피어있다.", "관광 안내도에는 없는 그 골목이", "이 도시에서 가장 예쁜 샛길이다."],
@@ -112,6 +115,7 @@ const PICKS: Record<PickConcept, {
     density: 2, safety: 3,
   },
   jireum: {
+    id: "arch-hakseong-trail",
     img: "pick-hakseong", type: "지름길 — 현지인만 아는 빠른 길",
     title: ["학성공원 뒷길,", "30분을 아끼는 현지인 루트"], loc: "울산 중구 학성동 · 학성공원 북쪽 사면",
     essay: ["정식 등산로를 따라가면 돌아가는 길,", "공원 북쪽 담장을 따라 걸으면", "30분이 절약된다. 게다가 중간에 나오는", "전망 포인트는 정식 코스에는 없다."],
