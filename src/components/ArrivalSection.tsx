@@ -10,10 +10,13 @@ interface Props {
   goodsUrl: string | null;
   goodsType: string;
   placeName: string;
+  /** Developer bypass — when true, treat as arrived without GPS check. */
+  forceUnlocked?: boolean;
 }
 
-export default function ArrivalSection({ target, goodsUrl, goodsType, placeName }: Props) {
-  const { status, distance, arrived, start } = useArrival(target);
+export default function ArrivalSection({ target, goodsUrl, goodsType, placeName, forceUnlocked = false }: Props) {
+  const { status, distance, arrived: gpsArrived, start } = useArrival(target);
+  const arrived = gpsArrived || forceUnlocked;
   const firedRef = useRef(false);
 
   useEffect(() => {
