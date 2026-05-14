@@ -546,7 +546,7 @@ export default function Index() {
                 <span key={b} className="text-[9px] px-2.5 py-1 border border-faint text-ink-mid tracking-wide rounded-full hover:border-[hsl(var(--accent))] hover:text-accent-c transition-colors cursor-default">{b}</span>
               ))}
             </div>
-            <a href="#" className="text-[10px] tracking-[0.18em] text-ink border-b border-current pb-0.5 hover:text-accent-c transition-colors">지도에서 보기</a>
+            <button type="button" onClick={() => setOpenId(pick.id)} className="text-[10px] tracking-[0.18em] text-ink border-b border-current pb-0.5 hover:text-accent-c transition-colors">자세히 보기</button>
           </div>
         </div>
         </ParallaxLayer>
