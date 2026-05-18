@@ -119,7 +119,7 @@ export default function ArchiveDetailModal({ id, placeholder = null, onClose }: 
             className="relative z-10 w-full md:w-[min(960px,92vw)] h-[100dvh] md:h-[min(90vh,920px)] md:my-auto md:rounded-md overflow-hidden bg-paper text-ink shadow-2xl flex flex-col transition-colors duration-500"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 md:px-8 py-3.5 border-b border-faint bg-paper/95 backdrop-blur-md shrink-0">
+            <div className="flex items-center justify-between px-5 md:px-8 py-3.5 border-b border-faint bg-paper/95 backdrop-blur-md shrink-0 transition-colors duration-500">
               <button
                 onDoubleClick={() => setForceUnlocked(true)}
                 title="Path ID (double-click: dev unlock)"
