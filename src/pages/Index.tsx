@@ -347,6 +347,16 @@ export default function Index() {
     document.documentElement.classList.toggle("day", !isNight);
   }, [isNight]);
 
+  // 실시간 시각 기반 테마 자동 동기화 (매 분 체크)
+  useEffect(() => {
+    const sync = () => setIsNight((prev) => {
+      const next = isNightHour();
+      return next === prev ? prev : next;
+    });
+    const t = setInterval(sync, 60_000);
+    return () => clearInterval(t);
+  }, []);
+
   // 가이드 자동 페이지 넘김 — 8초마다, 마지막 → 처음 순환
   useEffect(() => {
     const t = setInterval(() => setGuidePage((p) => (p + 1) % 5), 8000);
