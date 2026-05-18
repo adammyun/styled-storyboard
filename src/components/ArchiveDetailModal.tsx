@@ -36,13 +36,20 @@ const fadeUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
+interface PlaceholderData {
+  name: string;
+  type: string;
+  coverUrl: string;
+}
+
 interface Props {
   id: string | null;
+  placeholder?: PlaceholderData | null;
   onClose: () => void;
 }
 
-export default function ArchiveDetailModal({ id, onClose }: Props) {
-  const open = !!id;
+export default function ArchiveDetailModal({ id, placeholder = null, onClose }: Props) {
+  const open = !!id || !!placeholder;
   const [forceUnlocked, setForceUnlocked] = useState(false);
 
   const { data, isLoading, error } = useQuery({
@@ -109,17 +116,17 @@ export default function ArchiveDetailModal({ id, onClose }: Props) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 w-full md:w-[min(960px,92vw)] h-[100dvh] md:h-[min(90vh,920px)] md:my-auto md:rounded-md overflow-hidden bg-paper text-ink shadow-2xl flex flex-col"
+            className="relative z-10 w-full md:w-[min(960px,92vw)] h-[100dvh] md:h-[min(90vh,920px)] md:my-auto md:rounded-md overflow-hidden bg-paper text-ink shadow-2xl flex flex-col transition-colors duration-500"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 md:px-8 py-3.5 border-b border-faint bg-paper/95 backdrop-blur-md shrink-0">
+            <div className="flex items-center justify-between px-5 md:px-8 py-3.5 border-b border-faint bg-paper/95 backdrop-blur-md shrink-0 transition-colors duration-500">
               <button
                 onDoubleClick={() => setForceUnlocked(true)}
                 title="Path ID (double-click: dev unlock)"
                 className="group flex items-center gap-2 text-[10px] tracking-[0.3em] uppercase text-ink-light hover:text-ink transition-colors select-none"
               >
                 <MapPin className="w-3 h-3" />
-                <span>{id ?? "—"}</span>
+                <span>{id ?? (placeholder ? "PLACEHOLDER" : "—")}</span>
                 {forceUnlocked && (
                   <span className="text-[9px] tracking-[0.2em] text-accent-c">· DEV UNLOCKED</span>
                 )}
@@ -134,11 +141,46 @@ export default function ArchiveDetailModal({ id, onClose }: Props) {
             </div>
 
             {/* Body (scrollable) */}
-            <div className="flex-1 overflow-y-auto overscroll-contain grain">
-              {isLoading && (
+            <div className="flex-1 overflow-y-auto overscroll-contain grain transition-colors duration-500">
+              {placeholder && (
+                <>
+                  <motion.section
+                    initial="hidden"
+                    animate="show"
+                    variants={fadeUp}
+                    className="relative h-[42vh] min-h-[280px] overflow-hidden bg-[hsl(var(--ink-faint))]"
+                  >
+                    <img
+                      src={placeholder.coverUrl}
+                      alt={placeholder.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 px-6 md:px-10 pb-7 text-white">
+                      <p className="text-[10px] tracking-[0.3em] text-accent-c mb-2">
+                        {placeholder.type.toUpperCase()} · COMING SOON
+                      </p>
+                      <h1 className="font-serif-kr text-2xl md:text-4xl leading-tight mb-2">
+                        {placeholder.name}
+                      </h1>
+                    </div>
+                  </motion.section>
+                  <article className="max-w-[720px] mx-auto px-6 md:px-10 py-16 text-center">
+                    <p className="text-[10px] tracking-[0.3em] text-ink-light mb-4">PREPARING</p>
+                    <p className="font-serif-kr text-[18px] md:text-[20px] leading-[1.95] text-ink/85">
+                      이 길의 상세 이야기는 아직 준비 중입니다.<br />
+                      곧 길의 좌표, 동선, 그리고 작은 여담들로 다시 찾아올게요.
+                    </p>
+                    <p className="text-[11px] text-ink-light mt-6 tracking-wide">
+                      자연 풍경 이미지는 Unsplash placeholder 입니다.
+                    </p>
+                  </article>
+                </>
+              )}
+              {!placeholder && isLoading && (
                 <div className="py-32 text-center text-ink-light text-sm">불러오는 중…</div>
               )}
-              {error && (
+              {!placeholder && error && (
                 <div className="py-32 text-center text-ink-mid text-sm">
                   데이터를 불러오지 못했어요.
                 </div>

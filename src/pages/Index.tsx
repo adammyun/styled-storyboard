@@ -125,7 +125,25 @@ const PICKS: Record<PickConcept, {
   },
 };
 
-type ArchItem = { img: string; type: string; name: string; meta: string; tags: string; extra?: boolean; density: number; safety: number };
+type ArchItem = { img: string; type: string; name: string; meta: string; tags: string; extra?: boolean; density: number; safety: number; coverUrl?: string; placeholder?: boolean };
+
+// 자연(숲/바다/강) 무드의 Unsplash 고화질 placeholder
+const UNSPLASH = {
+  forest:    "https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=80&auto=format&fit=crop",
+  ocean:     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80&auto=format&fit=crop",
+  river:     "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=1600&q=80&auto=format&fit=crop",
+  mountain:  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80&auto=format&fit=crop",
+  fog:       "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1600&q=80&auto=format&fit=crop",
+  coast:     "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1600&q=80&auto=format&fit=crop",
+};
+const PLACEHOLDER_ITEMS: ArchItem[] = [
+  { img: "ph-forest-trail",   type: "샛길", name: "이름 없는 숲길",     meta: "준비 중 · 곧 공개", tags: "all", extra: true, density: 2, safety: 3, coverUrl: UNSPLASH.forest,   placeholder: true },
+  { img: "ph-ocean-overlook", type: "갓길", name: "바다가 보이는 언덕", meta: "준비 중 · 곧 공개", tags: "all", extra: true, density: 3, safety: 4, coverUrl: UNSPLASH.ocean,    placeholder: true },
+  { img: "ph-river-bend",     type: "지름길", name: "강이 굽이도는 자리", meta: "준비 중 · 곧 공개", tags: "all", extra: true, density: 3, safety: 4, coverUrl: UNSPLASH.river,    placeholder: true },
+  { img: "ph-fog-grove",      type: "샛길", name: "안개의 자작나무 숲", meta: "준비 중 · 곧 공개", tags: "all", extra: true, density: 2, safety: 2, coverUrl: UNSPLASH.fog,      placeholder: true },
+  { img: "ph-mountain-ridge", type: "지름길", name: "능선을 따라 걷기",   meta: "준비 중 · 곧 공개", tags: "all", extra: true, density: 1, safety: 2, coverUrl: UNSPLASH.mountain, placeholder: true },
+  { img: "ph-coast-path",     type: "갓길", name: "해안가 산책로",       meta: "준비 중 · 곧 공개", tags: "all", extra: true, density: 4, safety: 4, coverUrl: UNSPLASH.coast,    placeholder: true },
+];
 const NAMGU: ArchItem[] = [
   { img: "arch-samsan-alley", type: "샛길", name: "삼산동 주택가 골목", meta: "남구 · 20분 · 쉬움", tags: "namgu", density: 3, safety: 3 },
   { img: "arch-jangseongpo", type: "갓길", name: "장생포 고래문화마을", meta: "남구 · 40분 · 쉬움", tags: "namgu", density: 4, safety: 4 },
@@ -197,7 +215,15 @@ function DayNightImg({ base, alt, isNight, className = "" }: { base: string; alt
 }
 
 // 아카이브 카드: -night.jpg 가 있으면 크로스페이드, 없으면 day만
-function ArchImg({ base, alt, isNight }: { base: string; alt: string; isNight: boolean }) {
+function ArchImg({ base, alt, isNight, coverUrl }: { base: string; alt: string; isNight: boolean; coverUrl?: string }) {
+  if (coverUrl) {
+    return (
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <img src={coverUrl} alt={alt}
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 ${isNight ? "brightness-[0.55]" : "brightness-100"}`} loading="lazy" />
+      </div>
+    );
+  }
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
       <img src={`/images/${base}.jpg`} alt={alt}
@@ -243,13 +269,21 @@ function Dots({ value, label, tone = "ink", size = "sm" }: { value: number; labe
   );
 }
 
+// 실시간 낮/밤 — 06:00~17:59 낮, 18:00~05:59 밤
+const isNightHour = (d = new Date()) => {
+  const h = d.getHours();
+  return h < 6 || h >= 18;
+};
+
 // ── 메인 ──────────────────────────────────────────────────────────
 export default function Index() {
   // 아카이브 상세는 모달로 표시합니다.
   const [openId, setOpenId] = useState<string | null>(null);
+  const [openPlaceholder, setOpenPlaceholder] = useState<ArchItem | null>(null);
   const [intro, setIntro] = useState(true);
   const [scrolled, setScrolled] = useState(false);
-  const [isNight, setIsNight] = useState(false);
+  // 접속 시각 기준 자동 낮/밤. 매 분 동기화.
+  const [isNight, setIsNight] = useState<boolean>(() => isNightHour());
   const [concept, setConcept] = useState<Concept>("track");
   const [trackPick, setTrackPick] = useState<PickConcept>(() => {
     const arr: PickConcept[] = ["gatgil", "saetgil", "jireum"];
@@ -313,6 +347,16 @@ export default function Index() {
     document.documentElement.classList.toggle("day", !isNight);
   }, [isNight]);
 
+  // 실시간 시각 기반 테마 자동 동기화 (매 분 체크)
+  useEffect(() => {
+    const sync = () => setIsNight((prev) => {
+      const next = isNightHour();
+      return next === prev ? prev : next;
+    });
+    const t = setInterval(sync, 60_000);
+    return () => clearInterval(t);
+  }, []);
+
   // 가이드 자동 페이지 넘김 — 8초마다, 마지막 → 처음 순환
   useEffect(() => {
     const t = setInterval(() => setGuidePage((p) => (p + 1) % 5), 8000);
@@ -335,8 +379,13 @@ export default function Index() {
   // Track 선택 시엔 랜덤 픽, 그 외엔 해당 컨셉
   const pickConcept: PickConcept = concept === "track" ? trackPick : concept;
   const pick = PICKS[pickConcept];
-  const namguList = moreNamgu ? NAMGU : NAMGU.filter((i) => !i.extra);
-  const jungguList = moreJunggu ? JUNGGU : JUNGGU.filter((i) => !i.extra);
+  // 더보기에는 placeholder(자연 풍경) 컨텐츠를 섞어 레이아웃이 꽉 차도록 구성
+  const namguList = moreNamgu
+    ? [...NAMGU, ...PLACEHOLDER_ITEMS.slice(0, 3)]
+    : NAMGU.filter((i) => !i.extra);
+  const jungguList = moreJunggu
+    ? [...JUNGGU, ...PLACEHOLDER_ITEMS.slice(3, 6)]
+    : JUNGGU.filter((i) => !i.extra);
   const showNamgu = filter !== "junggu";
   const showJunggu = filter !== "namgu";
   const cycle = useMemo(() => cycleAround(concept), [concept]);
@@ -586,9 +635,9 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 md:gap-8">
               {namguList.map((it, i) => (
-                <article key={it.img} onClick={() => setOpenId(it.img)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
+                <article key={it.img} onClick={() => it.placeholder ? setOpenPlaceholder(it) : setOpenId(it.img)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
                   <div className="relative aspect-[4/5] overflow-hidden mb-4 rounded-sm bg-[hsl(var(--ink-faint))]">
-                    <ArchImg base={it.img} alt={it.name} isNight={isNight} />
+                    <ArchImg base={it.img} alt={it.name} isNight={isNight} coverUrl={it.coverUrl} />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="font-serif-kr italic text-sm text-white">자세히 보기</span>
                     </div>
@@ -606,7 +655,7 @@ export default function Index() {
               <button onClick={()=>setMoreNamgu(v=>!v)} className="text-[9px] tracking-[0.2em] px-5 py-2 border border-faint rounded-full text-ink-light hover:border-[hsl(var(--accent))] hover:text-accent-c transition-colors">
                 {moreNamgu ? "접기" : "더보기"}
               </button>
-              <span className="text-[10px] text-ink-light">{moreNamgu ? "전체 6곳을 보고 있어요" : "+ 3곳 더 있어요"}</span>
+              <span className="text-[10px] text-ink-light">{moreNamgu ? `전체 ${namguList.length}곳을 보고 있어요` : "+ 6곳 더 있어요"}</span>
             </div>
           </>
         )}
@@ -619,9 +668,9 @@ export default function Index() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7 md:gap-8">
               {jungguList.map((it, i) => (
-                <article key={it.img} onClick={() => setOpenId(it.img)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
+                <article key={it.img} onClick={() => it.placeholder ? setOpenPlaceholder(it) : setOpenId(it.img)}  className="reveal group cursor-pointer" style={{ transitionDelay: `${(i%3)*100}ms` }}>
                   <div className="relative aspect-[4/5] overflow-hidden mb-4 rounded-sm bg-[hsl(var(--ink-faint))]">
-                    <ArchImg base={it.img} alt={it.name} isNight={isNight} />
+                    <ArchImg base={it.img} alt={it.name} isNight={isNight} coverUrl={it.coverUrl} />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="font-serif-kr italic text-sm text-white">자세히 보기</span>
                     </div>
@@ -639,7 +688,7 @@ export default function Index() {
               <button onClick={()=>setMoreJunggu(v=>!v)} className="text-[9px] tracking-[0.2em] px-5 py-2 border border-faint rounded-full text-ink-light hover:border-[hsl(var(--accent))] hover:text-accent-c transition-colors">
                 {moreJunggu ? "접기" : "더보기"}
               </button>
-              <span className="text-[10px] text-ink-light">{moreJunggu ? "전체 6곳을 보고 있어요" : "+ 3곳 더 있어요"}</span>
+              <span className="text-[10px] text-ink-light">{moreJunggu ? `전체 ${jungguList.length}곳을 보고 있어요` : "+ 6곳 더 있어요"}</span>
             </div>
           </>
         )}
@@ -800,7 +849,11 @@ export default function Index() {
           </div>
         </div>
       </footer>
-      <ArchiveDetailModal id={openId} onClose={() => setOpenId(null)} />
+      <ArchiveDetailModal
+        id={openId}
+        placeholder={openPlaceholder ? { name: openPlaceholder.name, type: openPlaceholder.type, coverUrl: openPlaceholder.coverUrl! } : null}
+        onClose={() => { setOpenId(null); setOpenPlaceholder(null); }}
+      />
     </main>
   );
 }
