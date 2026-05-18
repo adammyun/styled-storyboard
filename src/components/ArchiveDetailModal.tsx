@@ -116,7 +116,7 @@ export default function ArchiveDetailModal({ id, placeholder = null, onClose }: 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 12 }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 w-full md:w-[min(960px,92vw)] h-[100dvh] md:h-[min(90vh,920px)] md:my-auto md:rounded-md overflow-hidden bg-paper text-ink shadow-2xl flex flex-col"
+            className="relative z-10 w-full md:w-[min(960px,92vw)] h-[100dvh] md:h-[min(90vh,920px)] md:my-auto md:rounded-md overflow-hidden bg-paper text-ink shadow-2xl flex flex-col transition-colors duration-500"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 md:px-8 py-3.5 border-b border-faint bg-paper/95 backdrop-blur-md shrink-0">
