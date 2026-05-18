@@ -36,13 +36,20 @@ const fadeUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
+interface PlaceholderData {
+  name: string;
+  type: string;
+  coverUrl: string;
+}
+
 interface Props {
   id: string | null;
+  placeholder?: PlaceholderData | null;
   onClose: () => void;
 }
 
-export default function ArchiveDetailModal({ id, onClose }: Props) {
-  const open = !!id;
+export default function ArchiveDetailModal({ id, placeholder = null, onClose }: Props) {
+  const open = !!id || !!placeholder;
   const [forceUnlocked, setForceUnlocked] = useState(false);
 
   const { data, isLoading, error } = useQuery({
