@@ -78,7 +78,7 @@ function StampSlot({
 }
 
 export default function ArrivalSection({
-  target, placeName, coverImage, forceUnlocked = false,
+  target, placeName, coverImage, forceUnlocked = false, nowKindOverride = null,
 }: Props) {
   const { status, distance, arrived: gpsArrived, start } = useArrival(target);
   const arrived = gpsArrived || forceUnlocked;
