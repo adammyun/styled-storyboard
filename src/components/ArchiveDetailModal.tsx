@@ -1,10 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { X, MapPin } from "lucide-react";
+import { X, MapPin, Ticket, Sun, Moon, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import ArrivalSection from "@/components/ArrivalSection";
 import AroundView from "@/components/AroundView";
+
+const GALLERY_POOL = [
+  "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1600&q=80",
+  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1200&q=80",
+  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1400&q=80",
+  "https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?w=1200&q=80",
+  "https://images.unsplash.com/photo-1505765050516-f72dcac9c60a?w=1400&q=80",
+  "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1600&q=80",
+];
+
+const isNightHour = (d = new Date()) => {
+  const h = d.getHours();
+  return h < 6 || h >= 18;
+};
 
 interface RouteStep {
   step: string;
