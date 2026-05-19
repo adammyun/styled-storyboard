@@ -103,7 +103,7 @@ export default function ArrivalSection({
     if (!arrived || firedRef.current) return;
     firedRef.current = true;
 
-    const kind = currentStampKind();
+    const kind: StampKind = nowKindOverride ?? currentStampKind();
     setStamps((prev) => {
       if (prev[kind]) return prev;
       const next = { ...prev, [kind]: new Date().toISOString() };
@@ -116,7 +116,7 @@ export default function ArrivalSection({
     burst({ x: 0.25, y: 0.6 });
     setTimeout(() => burst({ x: 0.75, y: 0.6 }), 180);
     setTimeout(() => burst({ x: 0.5, y: 0.4 }), 360);
-  }, [arrived, placeName]);
+  }, [arrived, placeName, nowKindOverride]);
 
   // 개발자용: 특정 시간대 스탬프 강제 획득
   const forceStamp = (kind: StampKind) => {
