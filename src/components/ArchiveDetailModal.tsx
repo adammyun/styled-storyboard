@@ -65,6 +65,10 @@ interface Props {
 export default function ArchiveDetailModal({ id, placeholder = null, onClose }: Props) {
   const open = !!id || !!placeholder;
   const [forceUnlocked, setForceUnlocked] = useState(false);
+  // 모달 내부 전용 낮/밤 오버라이드. null 이면 실제 시각을 따름.
+  const [forcedNight, setForcedNight] = useState<boolean | null>(null);
+  const effectiveNight = forcedNight ?? isNightHour();
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["path", id],
@@ -81,10 +85,21 @@ export default function ArchiveDetailModal({ id, placeholder = null, onClose }: 
     enabled: !!id,
   });
 
-  // Reset dev bypass whenever we open a different article
+  // Gallery — deterministic per article so it doesn't reshuffle on rerender
+  const galleryKey = id ?? placeholder?.name ?? "x";
+  const gallery = useMemo(() => {
+    let h = 0;
+    for (let i = 0; i < galleryKey.length; i++) h = (h * 31 + galleryKey.charCodeAt(i)) | 0;
+    const start = Math.abs(h) % GALLERY_POOL.length;
+    return Array.from({ length: 6 }, (_, i) => GALLERY_POOL[(start + i) % GALLERY_POOL.length]);
+  }, [galleryKey]);
+
+  // Reset dev bypass + theme override whenever we open a different article
   useEffect(() => {
     setForceUnlocked(false);
-  }, [id]);
+    setForcedNight(null);
+    setLightboxIdx(null);
+  }, [id, placeholder?.name]);
 
   // Scroll lock + ESC to close
   useEffect(() => {
